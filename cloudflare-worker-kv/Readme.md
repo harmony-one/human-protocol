@@ -1,4 +1,4 @@
-# Readme for Service Worker
+# KV Service Worker
 
 This Cloudflare Worker serves as a middleware to handle various HTTP requests and interact with a key-value store provided by Cloudflare Workers KV. The service enables the management of user interests, actions, and other related data.
 
