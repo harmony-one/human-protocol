@@ -1,6 +1,6 @@
 import React, {useState} from 'react'
-import {Box, Text, Anchor} from "grommet";
-import {Select, SelectProps, Typography} from "antd";
+import {Box} from "grommet";
+import {Select, SelectProps, Typography, Button} from "antd";
 import {useGeoLocation} from "../../hooks/useGeoLocation";
 import {useUserAccount} from "../../hooks/useUserAccount";
 import {TopicsList} from "../../constants";
@@ -24,7 +24,7 @@ export const HomePage = () => {
     <Typography.Text copyable={{ text: account?.address }}>
       User address: {account?.address}
     </Typography.Text>
-    <Box width={'400px'} gap={'8px'}>
+    <Box width={'400px'} gap={'16px'}>
       <Typography.Text>Select topics (4 max):</Typography.Text>
       <Select
         mode="multiple"
@@ -40,6 +40,15 @@ export const HomePage = () => {
         }}
         options={options}
       />
+      <Box width={'150px'}>
+        <Button
+          type={'primary'}
+          size={'large'}
+          disabled={selectedTopics.length === 0}
+        >
+          Add topics
+        </Button>
+      </Box>
     </Box>
     {location &&
         <Box>
