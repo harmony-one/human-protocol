@@ -1,9 +1,9 @@
 import React from 'react'
 import {Box, Text, Anchor} from "grommet";
-import {useGeolocation} from "../../hooks/useGeoLocation";
+import {useGeoLocation} from "../../hooks/useGeoLocation";
 
 export const HomePage = () => {
-  const data = useGeolocation()
+  const data = useGeoLocation()
 
   return <Box gap={'16px'} height={'100vh'} align={'center'} justify={'center'}>
     <Text>Human Protocol Demo</Text>

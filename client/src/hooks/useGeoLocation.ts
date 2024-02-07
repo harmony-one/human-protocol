@@ -1,6 +1,6 @@
 import {useEffect, useState} from "react";
 
-export const useGeolocation = () => {
+export const useGeoLocation = () => {
   const [state, setState] = useState<GeolocationPosition>();
   let mounted = true;
   let watchId: number;
