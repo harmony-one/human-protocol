@@ -29,6 +29,8 @@ export const HomePage = () => {
         setIsLoading(false)
         if(items.length === 0) {
           navigate('/welcome')
+        } else {
+          navigate('/feed')
         }
       }
     }

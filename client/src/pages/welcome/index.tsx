@@ -102,7 +102,7 @@ export const WelcomePage = () => {
           disabled={selectedTopics.length < 4}
           onClick={onAddTopicsClicked}
         >
-          Add topics
+          Submit
         </Button>
       </Box>
     </Box>

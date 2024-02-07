@@ -36,3 +36,23 @@ export const getUserActions = async (): Promise<UserAction[]> => {
   })
   return data
 }
+
+export interface SendUserActionParams {
+  user: string
+  payload: Object
+  topic: string
+  id: string
+}
+
+export const sendUserAction = async (params: SendUserActionParams): Promise<UserAction[]> => {
+  const body = JSON.stringify(params)
+  const { data } = await axios.post(
+    `${WorkerURL}/actions`,
+    body,
+    {
+      headers: {
+        "Content-Type": "application/json"
+      }
+    })
+  return data
+}

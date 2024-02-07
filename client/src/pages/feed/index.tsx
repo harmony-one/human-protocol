@@ -1,9 +1,11 @@
 import React, {useEffect, useState} from 'react'
 import {Box} from "grommet";
 import {useUserAccount} from "../../hooks/useUserAccount";
-import {getUserActions} from "../../api/worker";
-import {Spin, Typography} from "antd";
+import {getUserActions, sendUserAction} from "../../api/worker";
+import {Spin, Typography, List, Input, Button, Select, SelectProps} from "antd";
 import {UserAction} from "../../types";
+import {TopicsList} from "../../constants";
+import {toast} from "react-toastify";
 
 const UserActionItem = (props: { data: UserAction }) => {
   const { data } = props
@@ -27,35 +29,102 @@ export const FeedPage = () => {
   const { account } = useUserAccount()
 
   const [isLoading, setIsLoading] = useState(false)
-  const [userTopics, setUserTopics] = useState<string[]>([])
+  const [selectedTopic, setSelectedTopic] = useState<string>('')
+  const [userText, setUserText] = useState<string>('')
   const [actions, setActions] = useState<UserAction[]>([])
 
-  useEffect(() => {
-    const loadData = async () => {
-      if(!account?.address) {
-        console.log('return')
-        return false
-      }
-      setIsLoading(true)
-      let items: UserAction[] = []
-      try {
-        items = await getUserActions()
-        setActions(items.slice(0, 10))
-        console.log('Actions: ', items)
-      } catch (e) {
-
-      } finally {
-        setIsLoading(false)
-      }
+  const loadData = async () => {
+    if(!account?.address) {
+      return false
     }
+    setIsLoading(true)
+    let items: UserAction[] = []
+    try {
+      items = await getUserActions()
+      setActions(items.filter(item => item.user).slice(0, 10))
+      console.log('Actions: ', items)
+    } catch (e) {
+
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  useEffect(() => {
     loadData()
   }, [account]);
 
   const harmonyActions = actions
     .filter(action => action.topic === 'harmony')
 
+  const options: SelectProps['options'] = TopicsList
+    .map((topic) => {
+      return {
+        label: topic,
+        value: topic
+      }
+    })
+
+  const onSendActionClicked = async () => {
+    if(!account?.address) {
+      return
+    }
+    try {
+       const data = await sendUserAction({
+         id: '1',
+         user: account?.address,
+         payload: {
+           text: userText
+         },
+         topic: selectedTopic
+       })
+      console.log('action sent:', data)
+      toast.success('Action sent!', {
+        autoClose: 10000
+      })
+      loadData()
+    } catch (e) {
+      toast.error(`Error: ${(e as Error).message}`, {
+        autoClose: 10000
+      })
+    }
+  }
+
   return <Box margin={{ top: '32px' }}>
     <Box>
+      <Box align={'center'}>
+        <Typography.Text style={{ fontSize: '22px' }}>Add new Topic</Typography.Text>
+      </Box>
+      <Box>
+        <Typography.Text>Select topic:</Typography.Text>
+        <Select
+          size={'large'}
+          allowClear
+          style={{ width: '100%' }}
+          placeholder="Please select topics (4 max)"
+          defaultValue={''}
+          maxCount={1}
+          onChange={(value: string) => {
+            setSelectedTopic(value)
+            console.log(`selected ${value}`);
+          }}
+          options={options}
+        />
+        <Box>
+          <Typography.Text>Enter any text:</Typography.Text>
+          <Input
+            value={userText}
+            onChange={(e) => setUserText(e.target.value)}
+          />
+        </Box>
+        <Box margin={{ top: '16px' }}>
+          <Button type={'primary'} disabled={true} onClick={onSendActionClicked}>
+            Send Action (WIP)
+          </Button>
+        </Box>
+      </Box>
+    </Box>
+    <Box margin={{ top: '42px' }}>
       <Box align={'center'}>
         <Typography.Text style={{ fontSize: '22px' }}>Harmony</Typography.Text>
       </Box>
@@ -66,9 +135,16 @@ export const FeedPage = () => {
       }
       {!isLoading &&
           <Box>
-            {harmonyActions.map((item, index) => {
-              return <UserActionItem key={item.user + item.action + index.toString()} data={item} />
-            })}
+              <List
+                  size="small"
+                // header={<div>Header</div>}
+                // footer={<div>Footer</div>}
+                  bordered
+                  dataSource={harmonyActions}
+                  renderItem={(item) => <List.Item>
+                    User: {item.user}, topic: {item.topic}
+                  </List.Item>}
+              />
           </Box>
       }
     </Box>
@@ -82,10 +158,17 @@ export const FeedPage = () => {
           </Box>
       }
       {!isLoading &&
-          <Box gap={'8px'}>
-            {actions.map((item, index) => {
-              return <UserActionItem key={item.user + item.action + index.toString()} data={item} />
-            })}
+          <Box>
+              <List
+                  size="small"
+                  // header={<div>Header</div>}
+                  // footer={<div>Footer</div>}
+                  bordered
+                  dataSource={actions}
+                  renderItem={(item) => <List.Item>
+                    User: {item.user}, topic: {item.topic}, payload: {JSON.stringify(item.payload)}
+                  </List.Item>}
+              />
           </Box>
       }
     </Box>
