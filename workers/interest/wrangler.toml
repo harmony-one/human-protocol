@@ -1,0 +1,8 @@
+name = "interest"
+main = "src/index.ts"
+compatibility_date = "2024-01-29"
+account_id = "6f2d1163257d2fcde6e440abc6cdd879"
+
+kv_namespaces = [
+  { binding = "HCOUNTRY", id = "b70a627619374934b90b06df51441733" }
+]
