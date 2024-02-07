@@ -51,7 +51,8 @@ export const sendUserAction = async (params: SendUserActionParams): Promise<User
     body,
     {
       headers: {
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
+        "Accept": "application/json"
       }
     })
   return data
