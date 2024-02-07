@@ -42,7 +42,7 @@ Certainly! Here are examples added to the Endpoints section:
   Content-Type: application/json
 
   {
-    "id": "user123"
+    "id": "harmony"
   }
   ```
 
@@ -53,7 +53,7 @@ Certainly! Here are examples added to the Endpoints section:
   - `id`: The unique identifier of the user.
 - **Example**:
   ```http
-  GET /interests/user123
+  GET /interests/harmony
   ```
 
 ### `POST /users`
