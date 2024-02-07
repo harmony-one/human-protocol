@@ -1,68 +1,41 @@
-import React, {useState} from 'react'
+import React, {useEffect, useState} from 'react'
 import {Box} from "grommet";
-import {Select, SelectProps, Typography, Button} from "antd";
-import {useGeoLocation} from "../../hooks/useGeoLocation";
+import {Spin} from "antd";
 import {useUserAccount} from "../../hooks/useUserAccount";
-import {TopicsList} from "../../constants";
+import {getUserTopics, postUserTopics} from "../../api/worker";
+import {useNavigate} from "react-router-dom";
 
 export const HomePage = () => {
-  const location = useGeoLocation()
   const { account } = useUserAccount()
+  const navigate = useNavigate()
 
-  const [selectedTopics, setSelectedTopics] = useState<string[]>([])
+  const [isLoading, setIsLoading] = useState(false)
+  const [userTopics, setUserTopics] = useState<string[]>([])
 
-  const options: SelectProps['options'] = TopicsList
-    .map((topic) => {
-      return {
-        label: topic,
-        value: topic
+  useEffect(() => {
+    const loadData = async () => {
+      if(!account?.address) {
+        console.log('return')
+        return false
       }
-    });
+      setIsLoading(true)
+      let items: string[] = []
+      try {
+        items = await getUserTopics(account.address)
+        console.log('User topics: ', items)
+      } catch (e) {
 
-  return <Box gap={'24px'} pad={'32px'}>
-    <Typography.Text style={{ fontSize: '24px' }}>Human Protocol Demo</Typography.Text>
-    <Typography.Text copyable={{ text: account?.address }}>
-      User address: {account?.address}
-    </Typography.Text>
-    <Box width={'400px'} gap={'16px'}>
-      <Typography.Text>Select topics (4 max):</Typography.Text>
-      <Select
-        mode="multiple"
-        size={'large'}
-        allowClear
-        style={{ width: '100%' }}
-        placeholder="Please select topics (4 max)"
-        defaultValue={[]}
-        maxCount={4}
-        onChange={(values: string[]) => {
-          setSelectedTopics(values)
-          console.log(`selected ${values}`);
-        }}
-        options={options}
-      />
-      <Box width={'150px'}>
-        <Button
-          type={'primary'}
-          size={'large'}
-          disabled={selectedTopics.length === 0}
-        >
-          Add topics
-        </Button>
-      </Box>
-    </Box>
-    {location &&
-        <Box>
-            <Box gap={'8px'} direction={'row'}>
-                <Typography.Text>
-                    Location: {location.coords.latitude} {location.coords.longitude}
-                </Typography.Text>
-                <Typography.Text>
-                    <a href={`https://maps.google.com/?q=${location.coords.latitude},${location.coords.longitude}`} target={'_blank'}>
-                        Open on Google Maps
-                    </a>
-                </Typography.Text>
-            </Box>
-        </Box>
+      } finally {
+        setIsLoading(false)
+        if(items.length === 0) {
+          navigate('/welcome')
+        }
+      }
     }
+    loadData()
+  }, [account]);
+
+  return <Box margin={{ top: '32px' }}>
+    <Spin size={'default'} />
   </Box>
 }
