@@ -93,7 +93,7 @@ export const FeedPage = () => {
   return <Box margin={{ top: '32px' }}>
     <Box>
       <Box align={'center'}>
-        <Typography.Text style={{ fontSize: '22px' }}>Add new Topic</Typography.Text>
+        <Typography.Text style={{ fontSize: '22px' }}>Add new Action</Typography.Text>
       </Box>
       <Box>
         <Typography.Text>Select topic:</Typography.Text>
@@ -103,7 +103,6 @@ export const FeedPage = () => {
           style={{ width: '100%' }}
           placeholder="Please select topics (4 max)"
           defaultValue={''}
-          maxCount={1}
           onChange={(value: string) => {
             setSelectedTopic(value)
             console.log(`selected ${value}`);
