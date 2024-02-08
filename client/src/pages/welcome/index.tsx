@@ -47,11 +47,10 @@ export const WelcomePage = () => {
 
   useEffect(() => {
     const submitTopics = async () => {
-      // Here's where we'll add the check
+      // check for 4 clicks
       if (selectedTopics.length === 4 && account?.address) { // Ensure account address is not undefined
         try {
           setIsLoading(true);
-          // Now we can safely call postUserTopics because account.address is confirmed to be defined
           const data = await postUserTopics(account.address, selectedTopics);
           toast.success(`Added ${selectedTopics.length} topics!`, {
             autoClose: 10000
@@ -66,7 +65,6 @@ export const WelcomePage = () => {
           setIsLoading(false);
         }
       } else if (selectedTopics.length === 4 && !account?.address) {
-        // Handle the case where an account address is not available
         toast.error('Account information is missing, cannot proceed.');
       }
     };
