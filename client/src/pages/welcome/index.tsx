@@ -3,11 +3,16 @@ import {Box, Grid} from "grommet";
 import {useUserAccount} from "../../hooks/useUserAccount";
 import {postUserTopics} from "../../api/worker";
 import {toast} from "react-toastify";
-import {Button, Typography} from "antd";
 import {TopicsList} from "../../constants";
 import styled from "styled-components";
-import { CheckOutlined } from '@ant-design/icons';
 import {useNavigate} from "react-router-dom";
+
+const TopicsContainer = styled(Box)`
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 16px;
+    padding: 16px;
+`
 
 const TopicItemContainer = styled(Box)<{ isSelected?: boolean }>`
     position: relative;
@@ -20,7 +25,6 @@ const TopicItemContainer = styled(Box)<{ isSelected?: boolean }>`
     display: flex;
     justify-content: center;
     align-items: center;
-    margin: 5px;
 
     transition: transform 250ms;
     &:hover {
@@ -85,13 +89,7 @@ export const WelcomePage: React.FC = () => {
 
   return (
     <Box pad="medium">
-      <Grid
-        rows="small"
-        columns={{ count: 4, size: 'auto' }}
-        gap="small"
-        align="center"
-        justify="center"
-      >
+      <TopicsContainer>
         {TopicsList.map(topic => (
           <TopicItem
             key={topic.name}
@@ -100,7 +98,7 @@ export const WelcomePage: React.FC = () => {
             onClick={() => handleTopicClick(topic.name)}
           />
         ))}
-      </Grid>
+      </TopicsContainer>
     </Box>
   );
 };

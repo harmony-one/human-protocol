@@ -4,7 +4,7 @@ import {Outlet} from "react-router-dom";
 
 export const AppLayout = () => {
   return <Box
-    width={'600px'}
+    width={'700px'}
     margin={'0 auto'}
   >
     <Outlet />
