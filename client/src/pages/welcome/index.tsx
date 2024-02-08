@@ -69,7 +69,7 @@ export const WelcomePage: React.FC = () => {
     if (selectedTopics.length === 4 && account?.address) {
       postUserTopics(account.address, selectedTopics)
         .then(() => {
-          toast.success(`Added ${selectedTopics.length} topics!`, { autoClose: 10000 });
+          // toast.success(`Added ${selectedTopics.length} topics!`, { autoClose: 10000 });
           navigate('/feed');
         })
         .catch(e => {
