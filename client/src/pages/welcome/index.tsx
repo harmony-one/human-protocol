@@ -1,4 +1,4 @@
-import React, {useState} from 'react'
+import React, {useState, useEffect} from 'react'
 import {Box, Grid} from "grommet";
 import {useUserAccount} from "../../hooks/useUserAccount";
 import {postUserTopics} from "../../api/worker";
@@ -45,46 +45,46 @@ export const WelcomePage = () => {
   const [isLoading, setIsLoading] = useState(false)
   const [selectedTopics, setSelectedTopics] = useState<string[]>([])
 
-  const onAddTopicsClicked = async () => {
-    try {
-      if(!account?.address) {
-        return
+  useEffect(() => {
+    const submitTopics = async () => {
+      // Here's where we'll add the check
+      if (selectedTopics.length === 4 && account?.address) { // Ensure account address is not undefined
+        try {
+          setIsLoading(true);
+          // Now we can safely call postUserTopics because account.address is confirmed to be defined
+          const data = await postUserTopics(account.address, selectedTopics);
+          toast.success(`Added ${selectedTopics.length} topics!`, {
+            autoClose: 10000
+          });
+          navigate('/feed');
+        } catch (e) {
+          console.error('Cannot add topics', e);
+          toast.error(`Cannot add topics: ${(e as Error).message}`, {
+            autoClose: 1000
+          });
+        } finally {
+          setIsLoading(false);
+        }
+      } else if (selectedTopics.length === 4 && !account?.address) {
+        // Handle the case where an account address is not available
+        toast.error('Account information is missing, cannot proceed.');
       }
-      setIsLoading(true)
-      const data = await postUserTopics(account.address, selectedTopics)
-      toast.success(`Added ${selectedTopics.length} topics!`, {
-        autoClose: 10000
-      })
-      navigate('/feed')
-    } catch (e) {
-      console.error('Cannot add topics', e)
-      toast.error(`Cannot add topics: ${(e as Error).message}`, {
-        autoClose: 1000
-      })
-    } finally {
-      setIsLoading(false)
-    }
-  }
+    };
+    submitTopics();
+  }, [selectedTopics, account?.address, navigate]);
 
   return <Box gap={'24px'} pad={'32px'}>
-    <Box justify={'center'} align={'center'}>
-      <Typography.Text style={{ fontSize: '24px' }}>Select Your Interests</Typography.Text>
-      <Typography.Text style={{ fontSize: '18px', fontWeight: 'bold' }}>Pick at least 4</Typography.Text>
-    </Box>
     <Grid style={{
       gap: '10px',
       gridTemplateColumns: 'repeat(4, 1fr)'
     }}>
       {TopicsList.map((topic) => {
         const onClick = () => {
-          if(!selectedTopics.includes(topic)) {
-            setSelectedTopics([...selectedTopics, topic])
-          } else {
-            setSelectedTopics(topics => {
-              return topics.filter(t => t !== topic)
-            })
-          }
-        }
+          const newSelectedTopics = selectedTopics.includes(topic) 
+            ? selectedTopics.filter(t => t !== topic)
+            : [...selectedTopics, topic];
+          setSelectedTopics(newSelectedTopics);
+        };
         return <TopicItem
           key={topic}
           text={topic}
@@ -93,18 +93,5 @@ export const WelcomePage = () => {
         />
       })}
     </Grid>
-    <Box justify={'center'} align={'center'}>
-      <Box width={'150px'}>
-        <Button
-          type={'primary'}
-          loading={isLoading}
-          size={'large'}
-          disabled={selectedTopics.length < 4}
-          onClick={onAddTopicsClicked}
-        >
-          Submit
-        </Button>
-      </Box>
-    </Box>
   </Box>
 }
