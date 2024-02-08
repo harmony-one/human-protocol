@@ -9,15 +9,16 @@ import {useNavigate} from "react-router-dom";
 
 const TopicsContainer = styled(Box)`
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(20%, 1fr));
     gap: 16px;
     padding: 16px;
 `
 
 const TopicItemContainer = styled(Box)<{ isSelected?: boolean }>`
+    aspect-ratio: 1 / 1;
+    width: 100%;
+    max-height: 100%;
     position: relative;
-    width: 140px;
-    height: 140px;
     user-select: none;
     box-shadow: rgba(0, 0, 0, 0.08) 0 4px 16px;
     border-radius: 6px;
