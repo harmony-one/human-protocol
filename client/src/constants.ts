@@ -1,13 +1,13 @@
 import ArbitrumLogo from './assets/Arbitrum.svg';
 import BaseLogo from './assets/Base.svg';
-import BoredApeYachtClubLogo from './assets/Bored Ape Yacht Club.svg';
+import BoredApeYachtClubLogo from './assets/Bored Ape Yacht Club Logo.svg';
 import CompoundLogo from './assets/Compound.svg';
 import CryptoPunksLogo from './assets/CryptoPunks.svg';
 import EthDenverLogo from './assets/ETH Denver.svg';
 import EthereumLogo from './assets/Ethereum Logo.svg';
 import GnosisLogo from './assets/Gnosis.svg';
 import HarmonyLogo from './assets/Harmony Logo.svg';
-import MetamaskLogo from './assets/Metamask Logo.svg';
+import MetamaskLogo from './assets/Metamask logo.svg';
 import OpenSeaLogo from './assets/Open Sea.svg';
 import OptimismLogo from './assets/Optimism Logo.svg';
 import PolygonLogo from './assets/Polygon Logo.svg';

@@ -57,13 +57,10 @@ export const FeedPage = () => {
   const harmonyActions = actions
     .filter(action => action.topic === 'harmony')
 
-  const options: SelectProps['options'] = TopicsList
-    .map((topic) => {
-      return {
-        label: topic,
-        value: topic
-      }
-    })
+    const options = TopicsList.map((topic) => ({
+      label: topic.name,
+      value: topic.name,
+    }));
 
   const onSendActionClicked = async () => {
     if(!account?.address) {

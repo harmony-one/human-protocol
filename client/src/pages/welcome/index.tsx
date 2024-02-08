@@ -48,7 +48,7 @@ const TopicItem: React.FC<TopicItemProps> = ({ topic, isSelected, onClick }) => 
   );
 };
 
-const WelcomePage: React.FC = () => {
+export const WelcomePage: React.FC = () => {
   const { account } = useUserAccount();
   const navigate = useNavigate();
   const [selectedTopics, setSelectedTopics] = useState<string[]>([]);
@@ -97,5 +97,3 @@ const WelcomePage: React.FC = () => {
     </Box>
   );
 };
-
-export default WelcomePage;
