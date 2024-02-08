@@ -47,14 +47,16 @@ router
 						actionsArr.map(async (action: string) => {
 							const value = await env['hp-dev-message'].get(`actions:id:${action}`)
 
-							return {
-								...JSON.parse(value),
-								action: action,
-								timestamp: key.name.split(':')[2]
+							if (action && action !== 'null') {
+								return {
+									...JSON.parse(value),
+									action: action,
+									timestamp: key.name.split(':')[2]
+								}
 							}
 						}))
 
-					res = res.concat(actionsPayload)
+					res = res.concat(actionsPayload.filter(a => !!a))
 				}
 
 			} catch (e) {
@@ -131,6 +133,10 @@ router
 
 	.post('/actions', async ({ content }, env) => {
 		const { id, user, payload, topic } = content;
+
+		if (!id) {
+			return wrapCorsHeader(json({ success: false, err: 'Not found id' }, { status: 500 }));
+		}
 
 		const timestamp = Math.floor(Date.now() / 1000);
 
