@@ -30,9 +30,9 @@ const TopicItemContainer = styled(Box)<{ isSelected?: boolean }>`
     &:hover {
         transform: scale(1.1);
     }
-    &:active {
-        transform: scale(1.12);
-    }
+    //&:active {
+    //    transform: scale(1.12);
+    //}
     ${props => (props.isSelected) && `
       transform: scale(1.1);
       border: 2px solid #A1EEBD;
