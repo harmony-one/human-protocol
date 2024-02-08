@@ -9,18 +9,30 @@ import styled from "styled-components";
 import { CheckOutlined } from '@ant-design/icons';
 import {useNavigate} from "react-router-dom";
 
-const TopicItemContainer = styled(Box)`
+const TopicItemContainer = styled(Box)<{ isSelected?: boolean }>`
     position: relative;
     width: 140px;
     height: 140px;
     user-select: none;
-    box-shadow: rgba(0, 0, 0, 0.08) 0px 4px 16px;
+    box-shadow: rgba(0, 0, 0, 0.08) 0 4px 16px;
     border-radius: 6px;
     overflow: hidden;
     display: flex;
     justify-content: center;
     align-items: center;
     margin: 5px;
+
+    transition: transform 250ms;
+    &:hover {
+        transform: scale(1.1);
+    }
+    &:active {
+        transform: scale(1.12);
+    }
+    ${props => (props.isSelected) && `
+      transform: scale(1.1);
+      border: 2px solid #A1EEBD;
+    `}
 `
 
 
@@ -37,12 +49,7 @@ interface TopicItemProps {
 
 const TopicItem: React.FC<TopicItemProps> = ({ topic, isSelected, onClick }) => {
   return (
-    <TopicItemContainer onClick={onClick}>
-      {isSelected && (
-        <Box style={{ position: 'absolute', top: '10px', right: '10px' }}>
-          <CheckOutlined style={{ color: 'green', fontSize: '20px' }} />
-        </Box>
-      )}
+    <TopicItemContainer isSelected={isSelected} onClick={onClick}>
       <TopicItemImage src={topic.logo} alt={`${topic.name} logo`} />
     </TopicItemContainer>
   );
