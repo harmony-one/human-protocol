@@ -9,12 +9,6 @@ import styled from "styled-components";
 import { CheckOutlined } from '@ant-design/icons';
 import {useNavigate} from "react-router-dom";
 
-interface TopicItemProps {
-  text: string
-  isSelected: boolean
-  onClick: () => void
-}
-
 const TopicItemContainer = styled(Box)`
     position: relative;
     width: 140px;
@@ -22,74 +16,86 @@ const TopicItemContainer = styled(Box)`
     user-select: none;
     box-shadow: rgba(0, 0, 0, 0.08) 0px 4px 16px;
     border-radius: 6px;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 5px;
 `
 
-const TopicItem = (props: TopicItemProps) => {
-  const { text, isSelected } = props
-  return <TopicItemContainer justify={'end'} onClick={props.onClick}>
-    {isSelected &&
-        <Box style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }}>
-            <CheckOutlined style={{ color: 'green', fontSize: '20px' }} />
-        </Box>
-    }
-   <Box alignSelf={'center'}>
-     <Typography.Text>{text}</Typography.Text>
-   </Box>
-  </TopicItemContainer>
+
+const TopicItemImage = styled.img`
+  max-width: 100%;
+  max-height: 100%;
+`;
+
+interface TopicItemProps {
+  topic: { name: string; logo: string };
+  isSelected: boolean;
+  onClick: () => void;
 }
 
-export const WelcomePage = () => {
-  const { account } = useUserAccount()
-  const navigate = useNavigate()
+const TopicItem: React.FC<TopicItemProps> = ({ topic, isSelected, onClick }) => {
+  return (
+    <TopicItemContainer onClick={onClick}>
+      {isSelected && (
+        <Box style={{ position: 'absolute', top: '10px', right: '10px' }}>
+          <CheckOutlined style={{ color: 'green', fontSize: '20px' }} />
+        </Box>
+      )}
+      <TopicItemImage src={topic.logo} alt={`${topic.name} logo`} />
+    </TopicItemContainer>
+  );
+};
 
-  const [isLoading, setIsLoading] = useState(false)
-  const [selectedTopics, setSelectedTopics] = useState<string[]>([])
+const WelcomePage: React.FC = () => {
+  const { account } = useUserAccount();
+  const navigate = useNavigate();
+  const [selectedTopics, setSelectedTopics] = useState<string[]>([]);
 
   useEffect(() => {
-    const submitTopics = async () => {
-      // check for 4 clicks
-      if (selectedTopics.length === 4 && account?.address) { // Ensure account address is not undefined
-        try {
-          setIsLoading(true);
-          const data = await postUserTopics(account.address, selectedTopics);
-          toast.success(`Added ${selectedTopics.length} topics!`, {
-            autoClose: 10000
-          });
+    if (selectedTopics.length === 4 && account?.address) {
+      postUserTopics(account.address, selectedTopics)
+        .then(() => {
+          toast.success(`Added ${selectedTopics.length} topics!`, { autoClose: 10000 });
           navigate('/feed');
-        } catch (e) {
-          console.error('Cannot add topics', e);
-          toast.error(`Cannot add topics: ${(e as Error).message}`, {
-            autoClose: 1000
-          });
-        } finally {
-          setIsLoading(false);
-        }
-      } else if (selectedTopics.length === 4 && !account?.address) {
-        toast.error('Account information is missing, cannot proceed.');
-      }
-    };
-    submitTopics();
+        })
+        .catch(e => {
+          toast.error(`Cannot add topics: ${e.message}`, { autoClose: 1000 });
+        });
+    }
   }, [selectedTopics, account?.address, navigate]);
 
-  return <Box gap={'24px'} pad={'32px'}>
-    <Grid style={{
-      gap: '10px',
-      gridTemplateColumns: 'repeat(4, 1fr)'
-    }}>
-      {TopicsList.map((topic) => {
-        const onClick = () => {
-          const newSelectedTopics = selectedTopics.includes(topic) 
-            ? selectedTopics.filter(t => t !== topic)
-            : [...selectedTopics, topic];
-          setSelectedTopics(newSelectedTopics);
-        };
-        return <TopicItem
-          key={topic}
-          text={topic}
-          isSelected={selectedTopics.includes(topic)}
-          onClick={onClick}
-        />
-      })}
-    </Grid>
-  </Box>
-}
+  const handleTopicClick = (topicName: string) => {
+    setSelectedTopics(prevSelectedTopics => {
+      const isAlreadySelected = prevSelectedTopics.includes(topicName);
+      if (isAlreadySelected) {
+        return prevSelectedTopics.filter(t => t !== topicName);
+      }
+      return [...prevSelectedTopics, topicName];
+    });
+  };
+
+  return (
+    <Box pad="medium">
+      <Grid
+        rows="small"
+        columns={{ count: 4, size: 'auto' }}
+        gap="small"
+        align="center"
+        justify="center"
+      >
+        {TopicsList.map(topic => (
+          <TopicItem
+            key={topic.name}
+            topic={topic}
+            isSelected={selectedTopics.includes(topic.name)}
+            onClick={() => handleTopicClick(topic.name)}
+          />
+        ))}
+      </Grid>
+    </Box>
+  );
+};
+
+export default WelcomePage;
