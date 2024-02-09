@@ -1,11 +1,11 @@
 import React, {useEffect, useState} from 'react'
 import {Box} from "grommet";
-import {useUserAccount} from "../../hooks/useUserAccount";
 import {getUserActions, sendUserAction} from "../../api/worker";
 import {Spin, Typography, List, Input, Button, Select, SelectProps} from "antd";
 import {UserAction} from "../../types";
 import {TopicsList} from "../../constants";
 import {toast} from "react-toastify";
+import { useUserContext } from '../../context/UserContext';
 
 const UserActionItem = (props: { data: UserAction }) => {
   const { data } = props
@@ -26,7 +26,8 @@ const UserActionItem = (props: { data: UserAction }) => {
 }
 
 export const FeedPage = () => {
-  const { account } = useUserAccount()
+  // const { user } = useUser()
+  const { user } = useUserContext();
 
   const [isLoading, setIsLoading] = useState(false)
   const [selectedTopic, setSelectedTopic] = useState<string>('')
@@ -34,7 +35,7 @@ export const FeedPage = () => {
   const [actions, setActions] = useState<UserAction[]>([])
 
   const loadData = async () => {
-    if(!account?.address) {
+    if(!user?.address) {
       return false
     }
     setIsLoading(true)
@@ -52,7 +53,7 @@ export const FeedPage = () => {
 
   useEffect(() => {
     loadData()
-  }, [account]);
+  }, [user]);
 
   const harmonyActions = actions
     .filter(action => action.topic === 'harmony')
@@ -63,13 +64,13 @@ export const FeedPage = () => {
     }));
 
   const onSendActionClicked = async () => {
-    if(!account?.address) {
+    if(!user?.address) {
       return
     }
     try {
        const data = await sendUserAction({
          id: '1',
-         user: account?.address,
+         user: user?.address,
          payload: {
            text: userText
          },

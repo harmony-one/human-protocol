@@ -1,18 +1,18 @@
-import {useEffect, useState} from "react";
-import {ethers, Wallet, JsonRpcProvider} from 'ethers'
+import { useEffect, useState } from "react";
+import { ethers, Wallet, JsonRpcProvider } from 'ethers'
 
 const LSAccountKey = 'human_protocol_client_account'
 
 const getAccount = () => {
   const provider = new JsonRpcProvider()
   const privateKeyLS = window.localStorage.getItem(LSAccountKey)
-  if(privateKeyLS) {
+  if (privateKeyLS) {
     try {
       const acc = new Wallet(privateKeyLS, provider)
-      if(acc) {
+      if (acc) {
         return acc
       }
-    } catch (e) {}
+    } catch (e) { }
   }
 
   try {

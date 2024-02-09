@@ -1,11 +1,11 @@
 import React, {useState, useEffect} from 'react'
-import {Box, Grid} from "grommet";
-import {useUserAccount} from "../../hooks/useUserAccount";
+import { Box } from "grommet";
 import {postUserTopics} from "../../api/worker";
 import {toast} from "react-toastify";
 import {TopicsList} from "../../constants";
 import styled from "styled-components";
 import {useNavigate} from "react-router-dom";
+import { useUserContext } from '../../context/UserContext';
 
 const TopicsContainer = styled(Box)`
     display: grid;
@@ -61,13 +61,15 @@ const TopicItem: React.FC<TopicItemProps> = ({ topic, isSelected, onClick }) => 
 };
 
 export const WelcomePage: React.FC = () => {
-  const { account } = useUserAccount();
+  // const { user } = useUser();
+  const { user } = useUserContext();
+
   const navigate = useNavigate();
   const [selectedTopics, setSelectedTopics] = useState<string[]>([]);
 
   useEffect(() => {
-    if (selectedTopics.length === 4 && account?.address) {
-      postUserTopics(account.address, selectedTopics)
+    if (selectedTopics.length === 4 && user?.address) {
+      postUserTopics(user.address, selectedTopics)
         .then(() => {
           // toast.success(`Added ${selectedTopics.length} topics!`, { autoClose: 10000 });
           navigate('/feed');
@@ -76,7 +78,7 @@ export const WelcomePage: React.FC = () => {
           toast.error(`Cannot add topics: ${e.message}`, { autoClose: 1000 });
         });
     }
-  }, [selectedTopics, account?.address, navigate]);
+  }, [selectedTopics, user?.address, navigate]);
 
   const handleTopicClick = (topicName: string) => {
     setSelectedTopics(prevSelectedTopics => {
