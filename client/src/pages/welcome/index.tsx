@@ -1,11 +1,11 @@
 import React, {useState, useEffect} from 'react'
-import {Box} from "grommet";
-import {useUserAccount} from "../../hooks/useUserAccount";
+import { Box } from "grommet";
 import {postUserTopics} from "../../api/worker";
 import {toast} from "react-toastify";
 import {TopicsList} from "../../constants";
 import styled from "styled-components";
 import {useNavigate} from "react-router-dom";
+import { useUserContext } from '../../context/UserContext';
 
 const TopicsContainer = styled(Box)`
     display: grid;
@@ -61,7 +61,9 @@ const TopicItem: React.FC<TopicItemProps> = ({ topic, isSelected, onClick }) => 
 };
 
 export const WelcomePage: React.FC = () => {
-  const { wallet } = useUserAccount();
+  // const { user } = useUser();
+  const { wallet } = useUserContext();
+
   const navigate = useNavigate();
   const [selectedTopics, setSelectedTopics] = useState<string[]>([]);
 

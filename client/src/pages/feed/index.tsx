@@ -1,14 +1,15 @@
 import React, {useEffect, useState} from 'react'
 import {Box} from "grommet";
-import {useUserAccount} from "../../hooks/useUserAccount";
 import {getUserActions, sendUserAction} from "../../api/worker";
-import {Spin, Typography, List, Input, Button, Select} from "antd";
+import {Spin, Typography, List, Input, Button, Select, SelectProps} from "antd";
 import {UserAction} from "../../types";
 import {TopicsList} from "../../constants";
 import {toast} from "react-toastify";
+import { useUserContext } from '../../context/UserContext';
 
 export const FeedPage = () => {
-  const { wallet } = useUserAccount()
+  // const { user } = useUser()
+  const { wallet } = useUserContext();
 
   const [isLoading, setIsLoading] = useState(false)
   const [selectedTopic, setSelectedTopic] = useState<string>('')

@@ -1,14 +1,17 @@
 import axios from 'axios'
-import {UserAction} from "../types";
+import { UserAction } from "../types";
 import { firebaseClient } from '../firebase';
 
 const WorkerURL = 'https://kv-dev-message.humanprotocol.workers.dev'
+
+// user = wallet tied to many accounts
+// accounts = oauth medium used to create / fetch associated user; tied to a single user
 
 export const postUserTopics = async (address: string, topics: string[]) => {
   return await firebaseClient.addUser({
     id: address,
     topics
-  })
+  });
 
   // const body = JSON.stringify({
   //   id: address,
@@ -26,7 +29,7 @@ export const postUserTopics = async (address: string, topics: string[]) => {
 }
 
 export const getUserTopics = async (address: string): Promise<string[]> => {
-  return (await firebaseClient.getUser(address) as any).topics
+  return (await firebaseClient.getUser(address) as any).topics;
   // const { data } = await axios.get(`${WorkerURL}/users/${address}`, {
   //   headers: {
   //     "Content-Type": "application/json"
@@ -35,8 +38,18 @@ export const getUserTopics = async (address: string): Promise<string[]> => {
   // return data
 }
 
+export const postAccount = async (uid: string, publicKey: string, privateKey: string) => {
+  return await firebaseClient.addAccount({
+    uid: uid, publicKey: publicKey, privateKey: privateKey
+  });
+}
+
+export const getAccount = async (uid: string) => {
+  return await firebaseClient.getAccount(uid);
+}
+
 export const getUserActions = async (): Promise<UserAction[]> => {
-  return await firebaseClient.getActions() as any
+  return await firebaseClient.getActions() as any;
 
   // const { data } = await axios.get(`${WorkerURL}/actions`, {
   //   headers: {

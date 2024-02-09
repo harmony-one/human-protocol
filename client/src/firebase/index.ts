@@ -1,6 +1,7 @@
 import { FirebaseApp, initializeApp } from 'firebase/app';
 import { getFirestore, collection, getDocs, Firestore, setDoc, doc, query, where, WhereFilterOp, getDoc, limitToLast, orderBy } from 'firebase/firestore/lite';
 import { getAnalytics } from "firebase/analytics";
+import { getAuth, Auth } from "firebase/auth";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -25,12 +26,13 @@ interface GetListParams {
 class FirebaseClient {
     app: FirebaseApp;
     db: Firestore;
+    auth: Auth;
 
     constructor() {
         // Initialize Firebase
         this.app = initializeApp(firebaseConfig);
         this.db = getFirestore(this.app);
-
+        this.auth = getAuth(this.app);
         //const analytics = getAnalytics(app);
     }
 
@@ -75,6 +77,18 @@ class FirebaseClient {
 
     getUser = async (id: string) => {
         const snapshot = await getDoc(doc(this.db, "users", id))
+        return snapshot.data();
+    }
+
+    addAccount = async (data: any) => {
+        await setDoc(doc(this.db, "accounts", data.uid), {
+            privateKey: data.privateKey,
+            created: Math.floor(Date.now() / 1000)
+        })
+    }
+
+    getAccount = async (uid: string) => {
+        const snapshot = await getDoc(doc(this.db, "accounts", uid));
         return snapshot.data();
     }
 
