@@ -7,27 +7,9 @@ import {TopicsList} from "../../constants";
 import {toast} from "react-toastify";
 import { useUserContext } from '../../context/UserContext';
 
-const UserActionItem = (props: { data: UserAction }) => {
-  const { data } = props
-  return <Box border={{ size: '1px', color: 'black' }}>
-    <Box direction={'row'}>
-      <Typography.Text>User:</Typography.Text>
-      <Typography.Text>{data.user}</Typography.Text>
-    </Box>
-    <Box direction={'row'}>
-      <Typography.Text>Action:</Typography.Text>
-      <Typography.Text>{data.action}</Typography.Text>
-    </Box>
-    <Box direction={'row'}>
-      <Typography.Text>Topic:</Typography.Text>
-      <Typography.Text>{data.topic}</Typography.Text>
-    </Box>
-  </Box>
-}
-
 export const FeedPage = () => {
   // const { user } = useUser()
-  const { user } = useUserContext();
+  const { wallet } = useUserContext();
 
   const [isLoading, setIsLoading] = useState(false)
   const [selectedTopic, setSelectedTopic] = useState<string>('')
@@ -35,7 +17,7 @@ export const FeedPage = () => {
   const [actions, setActions] = useState<UserAction[]>([])
 
   const loadData = async () => {
-    if(!user?.address) {
+    if(!wallet?.address) {
       return false
     }
     setIsLoading(true)
@@ -53,7 +35,7 @@ export const FeedPage = () => {
 
   useEffect(() => {
     loadData()
-  }, [user]);
+  }, [wallet]);
 
   const harmonyActions = actions
     .filter(action => action.topic === 'harmony')
@@ -64,13 +46,13 @@ export const FeedPage = () => {
     }));
 
   const onSendActionClicked = async () => {
-    if(!user?.address) {
+    if(!wallet?.address) {
       return
     }
     try {
        const data = await sendUserAction({
          id: '1',
-         user: user?.address,
+         user: wallet?.address,
          payload: {
            text: userText
          },

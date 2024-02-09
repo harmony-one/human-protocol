@@ -4,15 +4,15 @@ import { useUserContext } from './context/UserContext';
 
 const AuthMiddleware: React.FC = () => {
   const navigate = useNavigate();
-  const { user } = useUserContext();
+  const { wallet } = useUserContext();
 
   useEffect(() => {
-    if (user === undefined) {
+    if (wallet === undefined) {
       navigate('/');
     }
-  }, [user, navigate]);
+  }, [wallet, navigate]);
 
-  return user !== undefined ? <Outlet /> : null;
+  return wallet !== undefined ? <Outlet /> : null;
 };
 
 export default AuthMiddleware;

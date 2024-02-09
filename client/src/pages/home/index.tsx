@@ -1,13 +1,22 @@
 import { useEffect } from 'react'
 import { Box, Button } from "grommet";
-import { Input } from "antd";
 import {useNavigate} from "react-router-dom";
-import { signInWithEmail, signInWithGoogle } from '../../firebase/authService';
+import {signInWithGithub, signInWithGoogle, signInWithTwitter} from '../../firebase/authService';
 import { User, UserCredential } from 'firebase/auth';
 import { toast } from 'react-toastify';
 import { LSAccountKey, generateWallet, useUserContext } from '../../context/UserContext';
 import { Wallet } from 'ethers';
 import { getAccount, postAccount } from '../../api/worker';
+import styled from "styled-components";
+
+const SignInButton = styled(Box)`
+    border: 2px solid black;
+    border-radius: 4px;
+    padding: 8px 16px;
+    font-size: 16px;
+    font-weight: bold;
+    width: 15vw;
+`
 
 export const HomePage = () => {
   const navigate = useNavigate();
@@ -15,33 +24,51 @@ export const HomePage = () => {
   // const [password, setPassword] = useState<string>('');
 
   // TODO: unset user upon logout
-  const { user, setUser } = useUserContext();
+  const { wallet, setWallet } = useUserContext();
 
   useEffect(() => {
-    console.log(`User: ${user}`);
-    if (user) {
+    console.log(`User wallet: ${wallet}`);
+    if (wallet) {
       navigate('/feed');
     }
-  }, [user, navigate]);
+  }, [wallet, navigate]);
 
   const handleSignIn = async (provider: string): Promise<void> => {
+    let userCredential: UserCredential;
+
     try {
-      let userCredential: UserCredential;
       // TODO: ensure the error "auth/popup-closed-by-user" is triggered immediately
       switch (provider) {
         case 'google':
           userCredential = await signInWithGoogle();
           break;
+        case 'twitter':
+          userCredential = await signInWithTwitter();
+          break;
+        case 'github':
+          userCredential = await signInWithGithub();
+          break;
         default:
           throw new Error('Unsupported provider');
       }
-      await handlePostSignIn(userCredential.user);
     } catch (error) {
       console.error(error);
       toast.error('Failed to sign in', {
         autoClose: 10000
       })
-    } 
+    }
+
+    // @ts-ignore
+    if(userCredential && userCredential.user) {
+      try {
+        await handlePostSignIn(userCredential.user);
+      } catch (e) {
+        console.error(e)
+        toast.error('Failed to create wallet', {
+          autoClose: 10000
+        })
+      }
+    }
   };
 
   // const handleEmailSignIn = async (): Promise<void> => {
@@ -54,19 +81,22 @@ export const HomePage = () => {
   //     toast.error('Failed to sign in', {
   //       autoClose: 10000
   //     })
-  //   } 
+  //   }
   // };
 
   const handlePostSignIn = async (user: User) => {
     if (user.metadata.creationTime === user.metadata.lastSignInTime) { // new user
-      console.log('creating account');
-      await createAccount(user.uid).then((account) => {
-        setUser(account);
+      console.log('creating account', user);
+      await createWallet(user.uid).then((account) => {
+        setWallet(account);
       });
       navigate('/welcome');
     } else { // existing user
       await fetchAccount(user.uid).then((account) => {
-        setUser(account);
+        console.log('fetched account', account)
+        setWallet(account);
+      }).catch(e => {
+        console.error(e)
       });
       console.log('fetching account')
       navigate('/feed');
@@ -74,29 +104,24 @@ export const HomePage = () => {
   };
 
   return (
-    <Box align="center" pad={{ top: '15vh' }}>      <div>
-        <Button 
-          onClick={() => handleSignIn('google')}
-          style={{
-            border: '2px solid black',
-            borderRadius: '4px',
-            padding: '8px 16px',
-            fontSize: '16px',
-            fontWeight: 'bold',
-            width: '15vw',
-          }}
-        >
+    <Box align="center" pad={{ top: '15vh' }} gap={'16px'}>
+        <SignInButton onClick={() => handleSignIn('google')}>
           Google
-        </Button>
+        </SignInButton>
+        <SignInButton onClick={() => handleSignIn('twitter')}>
+          Twitter
+        </SignInButton>
+        <SignInButton onClick={() => handleSignIn('github')}>
+          Github
+        </SignInButton>
         {/* <Input placeholder="Email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
         <Input placeholder="Password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
         <Button onClick={handleEmailSignIn}>Sign in with Email</Button> */}
-      </div>
     </Box>
   );
 }
 
-export const createAccount = async (uid: string): Promise<Wallet> => {
+export const createWallet = async (uid: string): Promise<Wallet> => {
   const hdWallet = Wallet.createRandom();
   await postAccount(uid, hdWallet.publicKey, hdWallet.privateKey);
   window.localStorage.setItem(LSAccountKey, hdWallet.privateKey);

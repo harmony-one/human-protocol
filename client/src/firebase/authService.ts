@@ -16,12 +16,12 @@ export const signInWithGoogle = async (): Promise<UserCredential> => {
   return signInWithPopup(firebaseClient.auth, provider);
 };
 
-// export const signInWithGithub = async (): Promise<UserCredential> => {
-//   const provider = new GithubAuthProvider();
-//   return signInWithPopup(firebaseClient.auth, provider);
-// };
+export const signInWithTwitter = async (): Promise<UserCredential> => {
+  const provider = new TwitterAuthProvider();
+  return signInWithPopup(firebaseClient.auth, provider);
+};
 
-// export const signInWithTwitter = async (): Promise<UserCredential> => {
-//   const provider = new TwitterAuthProvider();
-//   return signInWithPopup(firebaseClient.auth, provider);
-// };
+export const signInWithGithub = async (): Promise<UserCredential> => {
+  const provider = new GithubAuthProvider();
+  return signInWithPopup(firebaseClient.auth, provider);
+};
