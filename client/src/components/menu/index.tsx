@@ -6,19 +6,25 @@ import {LSAccountKey, useUserContext} from "../../context/UserContext";
 import {useNavigate} from "react-router-dom";
 
 export const AppMenu = () => {
-  const navigate = useNavigate()
-  const { currentUser } = useUserContext()
-  const [isOpened, setIsOpened] = useState(false)
+  const navigate = useNavigate();
+  const { wallet, setWallet } = useUserContext();
+  const [isOpened, setIsOpened] = useState(false);
 
   const onLogoutClicked = () => {
     const auth = getAuth();
     signOut(auth).then(() => {
+      setWallet(undefined);
       window.localStorage.removeItem(LSAccountKey)
       navigate('/')
     }).catch((e) => {
       console.error('Failed to logout', e)
     });
   }
+
+  const shortenAddress = (address: string): string => {
+    const start = address.substring(0, 4 + 2); // +2 to include '0x'
+    const end = address.substring(address.length - 4);
+    return `${start}...${end}`;  }
 
   return <Box pad={'16px'}>
     <Box align={'end'}>
@@ -29,17 +35,12 @@ export const AppMenu = () => {
       {/*        </Button>*/}
       {/*    </Box>*/}
       {/*}*/}
-      {currentUser &&
+      {wallet &&
         <Box gap={'8px'} align={'end'}>
             <Box direction={'row'} gap={'8px'} align={'center'}>
-                <Typography.Text style={{ fontWeight: 500, fontSize: '20px' }}>
-                  {currentUser.displayName}
+                <Typography.Text style={{ fontSize: '15px' }}>
+                  {shortenAddress(wallet.address)}
                 </Typography.Text>
-                {currentUser.providerData.length > 0 &&
-                    <Typography.Text style={{ fontWeight: 300, color: 'gray' }}>
-                      {currentUser.providerData[0].providerId}
-                    </Typography.Text>
-                }
             </Box>
             <Box width={'100px'}>
                 <Button type={'primary'} onClick={onLogoutClicked}>

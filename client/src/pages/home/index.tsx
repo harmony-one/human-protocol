@@ -15,7 +15,7 @@ const SignInButton = styled(Box)`
     padding: 8px 16px;
     font-size: 16px;
     font-weight: bold;
-    width: 15vw;
+    width: 300px;
 `
 
 export const HomePage = () => {
@@ -88,7 +88,7 @@ export const HomePage = () => {
 
   const handlePostSignIn = async (user: User) => {
     if (user.metadata.creationTime === user.metadata.lastSignInTime) { // new user
-      console.log('creating account', user);
+      console.log('creating account...', user);
       await createWallet(user.uid).then((account) => {
         setWallet(account);
       });
@@ -96,10 +96,9 @@ export const HomePage = () => {
     } else { // existing user
       console.log('fetching account...', user)
       await fetchAccount(user.uid).then((account) => {
-        console.log('Fetched account', account)
         setWallet(account);
       }).catch(e => {
-        console.error('Failed to get account', e)
+        console.error('Failed to get account', e);
       });
       navigate('/feed');
     }

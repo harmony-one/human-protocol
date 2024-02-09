@@ -38,8 +38,8 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
       setCurrentUser(data.currentUser)
       onAuthStateChanged(data, (data) => {
         console.log('Auth changed!', data)
-        setCurrentUser(data)
-      })
+        setCurrentUser(data);
+      });
     }
 
     getData()
