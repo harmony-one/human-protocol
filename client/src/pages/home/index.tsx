@@ -1,6 +1,6 @@
 import {useEffect} from 'react'
 import { Box } from "grommet";
-import { Button } from 'antd';
+import { Button, Typography } from 'antd';
 import {useNavigate} from "react-router-dom";
 import {signInWithGithub, signInWithGoogle, signInWithTwitter} from '../../firebase/authService';
 import {User, UserCredential} from 'firebase/auth';
@@ -12,7 +12,6 @@ import styled from "styled-components";
 
 const SignInButton = styled(Button)`
     font-size: 16px;
-    font-weight: bold;
     width: 300px;
 `
 
@@ -104,6 +103,9 @@ export const HomePage = () => {
 
   return (
     <Box align="center" pad={{ top: '15vh' }} gap={'16px'}>
+        <Typography.Title>
+          Human Protocol
+        </Typography.Title>
         <SignInButton onClick={() => handleSignIn('google')}>
           Google
         </SignInButton>
