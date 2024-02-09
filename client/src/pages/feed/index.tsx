@@ -26,7 +26,7 @@ const UserActionItem = (props: { data: UserAction }) => {
 }
 
 export const FeedPage = () => {
-  const { account } = useUserAccount()
+  const { wallet } = useUserAccount()
 
   const [isLoading, setIsLoading] = useState(false)
   const [selectedTopic, setSelectedTopic] = useState<string>('')
@@ -34,7 +34,7 @@ export const FeedPage = () => {
   const [actions, setActions] = useState<UserAction[]>([])
 
   const loadData = async () => {
-    if(!account?.address) {
+    if(!wallet?.address) {
       return false
     }
     setIsLoading(true)
@@ -52,7 +52,7 @@ export const FeedPage = () => {
 
   useEffect(() => {
     loadData()
-  }, [account]);
+  }, [wallet]);
 
   const harmonyActions = actions
     .filter(action => action.topic === 'harmony')
@@ -63,13 +63,13 @@ export const FeedPage = () => {
     }));
 
   const onSendActionClicked = async () => {
-    if(!account?.address) {
+    if(!wallet?.address) {
       return
     }
     try {
        const data = await sendUserAction({
          id: '1',
-         user: account?.address,
+         user: wallet?.address,
          payload: {
            text: userText
          },

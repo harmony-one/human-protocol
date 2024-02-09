@@ -61,13 +61,13 @@ const TopicItem: React.FC<TopicItemProps> = ({ topic, isSelected, onClick }) => 
 };
 
 export const WelcomePage: React.FC = () => {
-  const { account } = useUserAccount();
+  const { wallet } = useUserAccount();
   const navigate = useNavigate();
   const [selectedTopics, setSelectedTopics] = useState<string[]>([]);
 
   useEffect(() => {
-    if (selectedTopics.length === 4 && account?.address) {
-      postUserTopics(account.address, selectedTopics)
+    if (selectedTopics.length === 4 && wallet?.address) {
+      postUserTopics(wallet.address, selectedTopics)
         .then(() => {
           // toast.success(`Added ${selectedTopics.length} topics!`, { autoClose: 10000 });
           navigate('/feed');
@@ -76,7 +76,7 @@ export const WelcomePage: React.FC = () => {
           toast.error(`Cannot add topics: ${e.message}`, { autoClose: 1000 });
         });
     }
-  }, [selectedTopics, account?.address, navigate]);
+  }, [selectedTopics, wallet?.address, navigate]);
 
   const handleTopicClick = (topicName: string) => {
     setSelectedTopics(prevSelectedTopics => {

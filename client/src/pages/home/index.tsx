@@ -6,7 +6,7 @@ import {getUserTopics, postUserTopics} from "../../api/worker";
 import {useNavigate} from "react-router-dom";
 
 export const HomePage = () => {
-  const { account } = useUserAccount()
+  const { wallet } = useUserAccount()
   const navigate = useNavigate()
 
   const [isLoading, setIsLoading] = useState(false)
@@ -14,14 +14,14 @@ export const HomePage = () => {
 
   useEffect(() => {
     const loadData = async () => {
-      if(!account?.address) {
+      if(!wallet?.address) {
         console.log('return')
         return false
       }
       setIsLoading(true)
       let items: string[] = []
       try {
-        items = await getUserTopics(account.address)
+        items = await getUserTopics(wallet.address)
         console.log('User topics: ', items)
       } catch (e) {
 
@@ -35,7 +35,7 @@ export const HomePage = () => {
       }
     }
     loadData()
-  }, [account]);
+  }, [wallet]);
 
   return <Box margin={{ top: '32px' }}>
     <Spin size={'default'} />
