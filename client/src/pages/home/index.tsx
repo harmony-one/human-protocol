@@ -1,12 +1,12 @@
-import { useEffect } from 'react'
-import { Box, Button } from "grommet";
+import {useEffect} from 'react'
+import {Box} from "grommet";
 import {useNavigate} from "react-router-dom";
 import {signInWithGithub, signInWithGoogle, signInWithTwitter} from '../../firebase/authService';
-import { User, UserCredential } from 'firebase/auth';
-import { toast } from 'react-toastify';
-import { LSAccountKey, generateWallet, useUserContext } from '../../context/UserContext';
-import { Wallet } from 'ethers';
-import { getAccount, postAccount } from '../../api/worker';
+import {User, UserCredential} from 'firebase/auth';
+import {toast} from 'react-toastify';
+import {generateWallet, LSAccountKey, useUserContext} from '../../context/UserContext';
+import {Wallet} from 'ethers';
+import {getAccount, postAccount} from '../../api/worker';
 import styled from "styled-components";
 
 const SignInButton = styled(Box)`
@@ -92,13 +92,13 @@ export const HomePage = () => {
       });
       navigate('/welcome');
     } else { // existing user
+      console.log('fetching account...', user)
       await fetchAccount(user.uid).then((account) => {
-        console.log('fetched account', account)
+        console.log('Fetched account', account)
         setWallet(account);
       }).catch(e => {
-        console.error(e)
+        console.error('Failed to get account', e)
       });
-      console.log('fetching account')
       navigate('/feed');
     }
   };
@@ -134,5 +134,5 @@ export const fetchAccount = async (uid: string): Promise<Wallet> => {
     window.localStorage.setItem(LSAccountKey, accountData.privateKey);
     return generateWallet(accountData.privateKey);
   }
-  return generateWallet(""); // TODO
+  return createWallet(uid)
 }
