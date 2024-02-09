@@ -1,6 +1,5 @@
 import { FirebaseApp, initializeApp } from 'firebase/app';
 import { getFirestore, collection, getDocs, Firestore, setDoc, doc, query, where, WhereFilterOp, getDoc, limitToLast, orderBy } from 'firebase/firestore/lite';
-import { getAnalytics } from "firebase/analytics";
 import { getAuth, Auth } from "firebase/auth";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries

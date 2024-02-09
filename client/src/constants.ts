@@ -1,36 +1,35 @@
-import ArbitrumLogo from './assets/Arbitrum.svg';
-import BaseLogo from './assets/Base.svg';
-import BoredApeYachtClubLogo from './assets/Bored Ape Yacht Club Logo.svg';
-import CompoundLogo from './assets/Compound.svg';
-import CryptoPunksLogo from './assets/CryptoPunks.svg';
-import EthDenverLogo from './assets/ETH Denver.svg';
-import EthereumLogo from './assets/Ethereum Logo.svg';
-import GnosisLogo from './assets/Gnosis.svg';
-import HarmonyLogo from './assets/Harmony Logo.svg';
-import MetamaskLogo from './assets/Metamask logo.svg';
-import OpenSeaLogo from './assets/Open Sea.svg';
-import OptimismLogo from './assets/Optimism Logo.svg';
-import PolygonLogo from './assets/Polygon Logo.svg';
-import SporkDAOLogo from './assets/Spork DAO.svg';
-import UniswapLogo from './assets/Uniswap.svg';
-import zkGameLogo from './assets/zkGame.svg';
+import arbitrum from './assets/logos/arbitrum.svg';
+import base from './assets/logos/base.svg';
+import boredApeYachtClub from './assets/logos/boredApeYachtClub.svg';
+import compound from './assets/logos/compound.svg';
+import cryptoPunks from './assets/logos/cryptoPunks.svg';
+import ethDenver from './assets/logos/ethDenver.svg';
+import ethereum from './assets/logos/ethereum.svg';
+import gnosis from './assets/logos/gnosis.svg';
+import harmony from './assets/logos/harmony.svg';
+import metamask from './assets/logos/metamask.svg';
+import openSea from './assets/logos/openSea.svg';
+import optimism from './assets/logos/optimism.svg';
+import polygon from './assets/logos/polygon.svg';
+import sporkDao from './assets/logos/sporkDao.svg';
+import uniswap from './assets/logos/uniswap.svg';
+import zkGame from './assets/logos/zkGame.svg';
 
 export const TopicsList = [
-  { name: 'arbitrum', logo: ArbitrumLogo },
-  { name: 'base', logo: BaseLogo },
-  { name: 'boredApeYachtClub', logo: BoredApeYachtClubLogo },
-  { name: 'compound', logo: CompoundLogo},
-  { name: 'cryptopunks', logo: CryptoPunksLogo },
-  { name: 'ethDenver', logo: EthDenverLogo },
-  { name: 'ethereum', logo: EthereumLogo },
-  { name: 'gnosisSafe', logo: GnosisLogo },
-  { name: 'harmony', logo: HarmonyLogo },
-  { name: 'metamask', logo: MetamaskLogo },
-  { name: 'opensea', logo: OpenSeaLogo },
-  { name: 'optimism', logo: OptimismLogo },
-  { name: 'polygon', logo: PolygonLogo },
-  { name: 'sporkDao', logo: SporkDAOLogo },
-  { name: 'uniswap', logo: UniswapLogo },
-  { name: 'zksync', logo: zkGameLogo }
-
+  { name: 'arbitrum', logo: arbitrum },
+  { name: 'base', logo: base },
+  { name: 'boredApeYachtClub', logo: boredApeYachtClub },
+  { name: 'compound', logo: compound },
+  { name: 'cryptopunks', logo: cryptoPunks },
+  { name: 'ethDenver', logo: ethDenver },
+  { name: 'ethereum', logo: ethereum },
+  { name: 'gnosisSafe', logo: gnosis },
+  { name: 'harmony', logo: harmony },
+  { name: 'metamask', logo: metamask },
+  { name: 'opensea', logo: openSea },
+  { name: 'optimism', logo: optimism },
+  { name: 'polygon', logo: polygon },
+  { name: 'sporkDao', logo: sporkDao },
+  { name: 'uniswap', logo: uniswap },
+  { name: 'zksync', logo: zkGame }
 ];
