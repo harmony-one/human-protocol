@@ -85,8 +85,8 @@ export const AppMenu = () => {
       }
       {currentUser &&
         <Box gap={'8px'} align={'end'}>
-            <Box>
-                <Typography.Text style={{ fontWeight: 500, fontSize: '18px' }}>
+            <Box direction={'row'} gap={'8px'} align={'center'}>
+                <Typography.Text style={{ fontWeight: 500, fontSize: '20px' }}>
                   {currentUser.displayName}
                 </Typography.Text>
                 {currentUser.providerData.length > 0 &&

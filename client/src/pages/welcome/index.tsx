@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react'
-import {Box, Grid} from "grommet";
+import {Box} from "grommet";
 import {useUserAccount} from "../../hooks/useUserAccount";
 import {postUserTopics} from "../../api/worker";
 import {toast} from "react-toastify";

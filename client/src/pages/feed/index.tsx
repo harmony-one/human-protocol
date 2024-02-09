@@ -2,28 +2,10 @@ import React, {useEffect, useState} from 'react'
 import {Box} from "grommet";
 import {useUserAccount} from "../../hooks/useUserAccount";
 import {getUserActions, sendUserAction} from "../../api/worker";
-import {Spin, Typography, List, Input, Button, Select, SelectProps} from "antd";
+import {Spin, Typography, List, Input, Button, Select} from "antd";
 import {UserAction} from "../../types";
 import {TopicsList} from "../../constants";
 import {toast} from "react-toastify";
-
-const UserActionItem = (props: { data: UserAction }) => {
-  const { data } = props
-  return <Box border={{ size: '1px', color: 'black' }}>
-    <Box direction={'row'}>
-      <Typography.Text>User:</Typography.Text>
-      <Typography.Text>{data.user}</Typography.Text>
-    </Box>
-    <Box direction={'row'}>
-      <Typography.Text>Action:</Typography.Text>
-      <Typography.Text>{data.action}</Typography.Text>
-    </Box>
-    <Box direction={'row'}>
-      <Typography.Text>Topic:</Typography.Text>
-      <Typography.Text>{data.topic}</Typography.Text>
-    </Box>
-  </Box>
-}
 
 export const FeedPage = () => {
   const { wallet } = useUserAccount()

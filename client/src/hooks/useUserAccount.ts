@@ -1,7 +1,5 @@
 import {useEffect, useState} from "react";
 import {Wallet, JsonRpcProvider} from 'ethers'
-import {UserCredential} from "firebase/auth";
-import {UserProfile} from "../types";
 import {getAuth, onAuthStateChanged, User} from "firebase/auth";
 
 const LSAccountKey = 'human_protocol_client_account'
