@@ -4,13 +4,37 @@ import {Button, Modal, Typography} from "antd"
 import {getAuth, TwitterAuthProvider,GithubAuthProvider, signInWithPopup, signOut } from "firebase/auth";
 import {useUserAccount} from "../../hooks/useUserAccount";
 
-const onGithubClicked = () => {
-
-}
-
 export const AppMenu = () => {
   const { currentUser } = useUserAccount()
   const [isOpened, setIsOpened] = useState(false)
+
+  const onGithubClicked = () => {
+    const provider = new GithubAuthProvider();
+    const auth = getAuth();
+    signInWithPopup(auth, provider)
+      .then((result) => {
+        // This gives you a GitHub Access Token. You can use it to access the GitHub API.
+        const credential = GithubAuthProvider.credentialFromResult(result);
+        if(credential) {
+          const token = credential.accessToken;
+
+          // The signed-in user info.
+          const user = result.user;
+          // IdP data available using getAdditionalUserInfo(result)
+          console.log('Github user successfully authorized! User:', user, ', credential:', credential)
+          setIsOpened(false)
+        }
+      }).catch((error) => {
+      // Handle Errors here.
+      const errorCode = error.code;
+      const errorMessage = error.message;
+      // The email of the user's account used.
+      const email = error.customData.email;
+      // The AuthCredential type that was used.
+      const credential = GithubAuthProvider.credentialFromError(error);
+      // ...
+    });
+  }
 
   const onTwitterClicked = async () => {
     const auth = getAuth();
