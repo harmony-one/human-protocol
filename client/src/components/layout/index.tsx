@@ -1,12 +1,16 @@
 import React from 'react'
 import {Box, Text} from "grommet";
 import {Outlet} from "react-router-dom";
+import {AppMenu} from "../menu";
 
 export const AppLayout = () => {
-  return <Box
-    width={'700px'}
-    margin={'0 auto'}
-  >
-    <Outlet />
+  return <Box>
+    <AppMenu />
+    <Box
+      width={'700px'}
+      margin={'0 auto'}
+    >
+      <Outlet />
+    </Box>
   </Box>
 }

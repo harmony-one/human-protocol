@@ -1,18 +1,19 @@
-import { useEffect, useState } from "react";
-import { ethers, Wallet, JsonRpcProvider } from 'ethers'
+import {useEffect, useState} from "react";
+import {Wallet, JsonRpcProvider} from 'ethers'
+import {getAuth, onAuthStateChanged, User} from "firebase/auth";
 
 const LSAccountKey = 'human_protocol_client_account'
 
-const getAccount = () => {
+const getWallet = () => {
   const provider = new JsonRpcProvider()
   const privateKeyLS = window.localStorage.getItem(LSAccountKey)
-  if (privateKeyLS) {
+  if(privateKeyLS) {
     try {
       const acc = new Wallet(privateKeyLS, provider)
-      if (acc) {
+      if(acc) {
         return acc
       }
-    } catch (e) { }
+    } catch (e) {}
   }
 
   try {
@@ -26,14 +27,30 @@ const getAccount = () => {
 }
 
 export const useUserAccount = () => {
-  const [account, setAccount] = useState<Wallet>()
+  const [wallet, setWallet] = useState<Wallet>()
+  const [currentUser, setCurrentUser] = useState<User | null>(null)
+  const [isLoggedIn, setLoggedIn] = useState(false)
 
   useEffect(() => {
-    const acc = getAccount()
-    setAccount(acc)
+    const data = getWallet()
+    setWallet(data)
+  }, []);
+
+  useEffect(() => {
+    const getData = () => {
+      const data = getAuth()
+      setCurrentUser(data.currentUser)
+      onAuthStateChanged(data, (data) => {
+        console.log('AUTH CHANGED!', data)
+        setCurrentUser(data)
+      })
+    }
+
+    getData()
   }, []);
 
   return {
-    account
+    wallet,
+    currentUser
   };
 };
