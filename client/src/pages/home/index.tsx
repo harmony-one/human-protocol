@@ -1,5 +1,6 @@
 import {useEffect} from 'react'
-import {Box} from "grommet";
+import { Box } from "grommet";
+import { Button } from 'antd';
 import {useNavigate} from "react-router-dom";
 import {signInWithGithub, signInWithGoogle, signInWithTwitter} from '../../firebase/authService';
 import {User, UserCredential} from 'firebase/auth';
@@ -9,10 +10,7 @@ import {Wallet} from 'ethers';
 import {getAccount, postAccount} from '../../api/worker';
 import styled from "styled-components";
 
-const SignInButton = styled(Box)`
-    border: 2px solid black;
-    border-radius: 4px;
-    padding: 8px 16px;
+const SignInButton = styled(Button)`
     font-size: 16px;
     font-weight: bold;
     width: 300px;

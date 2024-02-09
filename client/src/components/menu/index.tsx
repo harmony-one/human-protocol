@@ -43,7 +43,7 @@ export const AppMenu = () => {
                 </Typography.Text>
             </Box>
             <Box width={'100px'}>
-                <Button type={'primary'} onClick={onLogoutClicked}>
+                <Button type={'default'} onClick={onLogoutClicked}>
                     Logout
                 </Button>
             </Box>
