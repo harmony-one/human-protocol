@@ -24,14 +24,16 @@ export const HomePage = () => {
   // const [password, setPassword] = useState<string>('');
 
   // TODO: unset user upon logout
-  const { wallet, setWallet } = useUserContext();
+  const { wallet, setWallet, currentUser } = useUserContext();
 
   useEffect(() => {
-    console.log(`User wallet: ${wallet}`);
-    if (wallet) {
-      navigate('/feed');
+    if(currentUser) {
+      console.log(`User wallet: ${wallet}`);
+      if (wallet) {
+        navigate('/feed');
+      }
     }
-  }, [wallet, navigate]);
+  }, [currentUser, wallet, navigate]);
 
   const handleSignIn = async (provider: string): Promise<void> => {
     let userCredential: UserCredential;

@@ -1,10 +1,12 @@
 import React, {useState} from 'react'
 import { Box } from "grommet"
-import {Button, Modal, Typography} from "antd"
-import {getAuth, TwitterAuthProvider,GithubAuthProvider, signInWithPopup, signOut } from "firebase/auth";
+import {Button, Typography} from "antd"
+import {getAuth, signOut } from "firebase/auth";
 import {LSAccountKey, useUserContext} from "../../context/UserContext";
+import {useNavigate} from "react-router-dom";
 
 export const AppMenu = () => {
+  const navigate = useNavigate()
   const { currentUser } = useUserContext()
   const [isOpened, setIsOpened] = useState(false)
 
@@ -12,8 +14,9 @@ export const AppMenu = () => {
     const auth = getAuth();
     signOut(auth).then(() => {
       window.localStorage.removeItem(LSAccountKey)
-    }).catch((error) => {
-      // An error happened.
+      navigate('/')
+    }).catch((e) => {
+      console.error('Failed to logout', e)
     });
   }
 
