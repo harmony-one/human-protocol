@@ -24,6 +24,7 @@ const TopicItemContainer = styled(Box)<{ isSelected?: boolean }>`
     border-radius: 6px;
     overflow: hidden;
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
 
@@ -42,23 +43,34 @@ const TopicItemContainer = styled(Box)<{ isSelected?: boolean }>`
 
 
 const TopicItemImage = styled.img`
-  max-width: 100%;
-  max-height: 100%;
+  width: 60%;
+  margin-top: 10%;
+`;
+
+const TopicInitials = styled.span`
+  position: absolute;
+  bottom: 5px;
+  right: 5px;
+  font-weight: bold;
+  font-size: 0.9em;
 `;
 
 interface TopicItemProps {
-  topic: { name: string; logo: string };
+  topic: { name: string; logo: string; initials: string };
   isSelected: boolean;
   onClick: () => void;
 }
+
 
 const TopicItem: React.FC<TopicItemProps> = ({ topic, isSelected, onClick }) => {
   return (
     <TopicItemContainer isSelected={isSelected} onClick={onClick}>
       <TopicItemImage src={topic.logo} alt={`${topic.name} logo`} />
+      <TopicInitials>{topic.initials}</TopicInitials>
     </TopicItemContainer>
   );
 };
+
 
 export const WelcomePage: React.FC = () => {
   // const { user } = useUser();
