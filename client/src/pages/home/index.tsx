@@ -2,7 +2,7 @@ import {useEffect} from 'react'
 import { Box } from "grommet";
 import { Button, Typography } from 'antd';
 import {useNavigate} from "react-router-dom";
-import {signInWithGithub, signInWithGoogle, signInWithTwitter} from '../../firebase/authService';
+import {signInWithGithub, signInWithGoogle, signInWithTwitter, signInWithFacebook} from '../../firebase/authService';
 import {User, UserCredential} from 'firebase/auth';
 import {toast} from 'react-toastify';
 import {useUserContext} from '../../context/UserContext';
@@ -18,14 +18,14 @@ export const HomePage = () => {
   const navigate = useNavigate();
 
   // TODO: unset user upon logout
-  const { wallet } = useUserContext();
+  // const { wallet } = useUserContext();
 
-  useEffect(() => {
-    if(wallet) {
-      console.log(`[Home] User wallet address: ${wallet.address}`);
-      navigate('/feed');
-    }
-  }, [wallet, navigate]);
+  // useEffect(() => {
+  //   if(wallet) {
+  //     console.log(`[Home] User wallet address: ${wallet.address}`);
+  //     navigate('/feed');
+  //   }
+  // }, [wallet, navigate]);
 
   const handleSignIn = async (provider: string): Promise<void> => {
     let userCredential: UserCredential;
@@ -42,14 +42,14 @@ export const HomePage = () => {
         case 'github':
           userCredential = await signInWithGithub();
           break;
+        case 'facebook':
+          userCredential = await signInWithFacebook();
+          break;
         default:
           throw new Error('Unsupported provider');
       }
     } catch (error) {
       console.error(error);
-      toast.error('Failed to sign in', {
-        autoClose: 10000
-      })
     }
 
     // @ts-ignore
@@ -57,10 +57,7 @@ export const HomePage = () => {
       try {
         await handlePostSignIn(userCredential.user);
       } catch (e) {
-        console.error(e)
-        toast.error('Failed to create wallet', {
-          autoClose: 10000
-        })
+        console.error(e);
       }
     }
   };
@@ -89,7 +86,7 @@ export const HomePage = () => {
   return (
     <Box align="center" pad={{ top: '15vh' }} gap={'16px'}>
         <Typography.Title>
-          Human Protocol
+          Auth
         </Typography.Title>
         <SignInButton onClick={() => handleSignIn('google')}>
           Google
@@ -99,6 +96,9 @@ export const HomePage = () => {
         </SignInButton>
         <SignInButton onClick={() => handleSignIn('github')}>
           Github
+        </SignInButton>
+        <SignInButton onClick={() => handleSignIn('facebook')}>
+          Facebook
         </SignInButton>
         {/* <Input placeholder="Email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
         <Input placeholder="Password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
