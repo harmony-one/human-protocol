@@ -1,5 +1,5 @@
 import { FirebaseApp, initializeApp } from 'firebase/app';
-import { getFirestore, collection, getDocs, Firestore, setDoc, doc, query, where, WhereFilterOp, getDoc, limitToLast, orderBy } from 'firebase/firestore/lite';
+import { getFirestore, collection, getDocs, Firestore, setDoc, doc, query, where, WhereFilterOp, getDoc, limitToLast, orderBy, addDoc } from 'firebase/firestore/lite';
 import { getAnalytics } from "firebase/analytics";
 import { getAuth, Auth } from "firebase/auth";
 // TODO: Add SDKs for Firebase products that you want to use
@@ -95,6 +95,58 @@ class FirebaseClient {
     getUsers = (params?: GetListParams) => this.getList('users', params);
 
     getActions = (params?: GetListParams) => this.getList('actions', params);
+
+    addMessage = async (params: {
+        text: string;
+        address: string;
+        locationData?: {
+            address: string,
+            latitude: string;
+            longitude: string;
+        }
+    }) => {
+        const { address, text, locationData } = params;
+
+        const mentionRegex = /@(\w+)/g;
+        const hashtagRegex = /#(\w+)/g;
+        const mentions = [...text.matchAll(mentionRegex)].map(match => match[1]);
+        const hashtags = [...text.matchAll(hashtagRegex)].map(match => match[1]);
+
+        const displayName = this.auth.currentUser?.isAnonymous ?
+            'Anonymous' : this.auth.currentUser?.displayName;
+
+        const message = {
+            user: {
+                uid: this.auth.currentUser?.uid,
+                displayName,
+                address
+            },
+            text,
+            location: {
+                address: locationData?.address || '',
+                latitude: locationData?.latitude || '',
+                longitude: locationData?.longitude || '',
+            },
+            mentions,
+            hashtags,
+            created: Math.floor(Date.now() / 1000)
+        };
+
+        const newDoc = await addDoc(collection(this.db, "messages"), message);
+
+        mentions.forEach(async (mention) => {
+            const connection = {
+                fromUser: '',
+                toUser: mention,
+                messageId: newDoc.id,
+                created: Math.floor(Date.now() / 1000)
+            };
+
+            await addDoc(collection(this.db, "connections"), connection);
+        });
+    }
+
+    getMessages = (params?: GetListParams) => this.getList('messages', params);
 }
 
 export const firebaseClient = new FirebaseClient();

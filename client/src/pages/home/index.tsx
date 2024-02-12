@@ -27,7 +27,7 @@ export const HomePage = () => {
     if(currentUser) {
       console.log(`User wallet: ${wallet}`);
       if (wallet) {
-        navigate('/feed');
+        navigate('/message');
       }
     }
   }, [currentUser, wallet, navigate]);
