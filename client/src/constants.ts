@@ -16,20 +16,32 @@ import uniswap from './assets/logos/uniswap.svg';
 import zkGame from './assets/logos/zkGame.svg';
 
 export const TopicsList = [
-  { name: 'arbitrum', logo: arbitrum, initials: 'Ar' },
-  { name: 'base', logo: base, initials: 'B' },
-  { name: 'boredApeYachtClub', logo: boredApeYachtClub, initials: 'Ba' },
-  { name: 'compound', logo: compound, initials: 'Co' },
-  { name: 'cryptopunks', logo: cryptoPunks, initials: 'Cp' },
-  { name: 'ethDenver', logo: ethDenver, initials: 'Ed' },
-  { name: 'ethereum', logo: ethereum, initials: 'Et' },
-  { name: 'gnosisSafe', logo: gnosis, initials: 'Gs' },
-  { name: 'harmony', logo: harmony, initials: 'H1' },
-  { name: 'metamask', logo: metamask, initials: 'Mm' },
-  { name: 'opensea', logo: openSea, initials: 'Os' },
-  { name: 'optimism', logo: optimism, initials: 'Op' },
-  { name: 'polygon', logo: polygon, initials: 'Pg' },
-  { name: 'sporkDao', logo: sporkDao, initials: 'Sd' },
-  { name: 'uniswap', logo: uniswap, initials: 'Us' },
-  { name: 'zksync', logo: zkGame, initials: 'Zs' }
+  'arbitrum', 'base', 'boredApeYachtClub', 'compound', 'cryptopunks',
+  'ethDenver', 'ethereum', 'gnosisSafe', 'harmony', 'metamask',
+  'opensea', 'optimism', 'polygon', 'sporkDao', 'uniswap', 'zksync',
 ];
+
+interface Asset {
+  logo: string;
+  initials: string;
+  displayName: string;
+}
+
+export const TopicAssets: Record<string, Asset> = {
+  arbitrum: { logo: arbitrum, initials: 'Ar', displayName: 'Arbitrum' },
+  base: { logo: base, initials: 'B', displayName: 'Base' },
+  boredApeYachtClub: { logo: boredApeYachtClub, initials: 'Ba', displayName: 'Bored Ape Yacht Club' },
+  compound: { logo: compound, initials: 'Co', displayName: 'Compound' },
+  cryptopunks: { logo: cryptoPunks, initials: 'Cp', displayName: 'CryptoPunks' },
+  ethDenver: { logo: ethDenver, initials: 'Ed', displayName: 'ETH Denver' },
+  ethereum: { logo: ethereum, initials: 'Et', displayName: 'Ethereum' },
+  gnosisSafe: { logo: gnosis, initials: 'Gs', displayName: 'Gnosis Safe' },
+  harmony: { logo: harmony, initials: 'H1', displayName: 'Harmony' },
+  metamask: { logo: metamask, initials: 'Mm', displayName: 'MetaMask' },
+  opensea: { logo: openSea, initials: 'Os', displayName: 'OpenSea' },
+  optimism: { logo: optimism, initials: 'Op', displayName: 'Optimism' },
+  polygon: { logo: polygon, initials: 'Pg', displayName: 'Polygon' },
+  sporkDao: { logo: sporkDao, initials: 'Sd', displayName: 'SporkDAO' },
+  uniswap: { logo: uniswap, initials: 'Us', displayName: 'Uniswap' },
+  zksync: { logo: zkGame, initials: 'Zs', displayName: 'zkSync' },
+};

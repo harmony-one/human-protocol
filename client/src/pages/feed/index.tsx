@@ -40,9 +40,9 @@ export const FeedPage = () => {
   const harmonyActions = actions
     .filter(action => action.topic === 'harmony')
 
-    const options = TopicsList.map((topic) => ({
-      label: topic.name,
-      value: topic.name,
+    const options = TopicsList.map((topicName) => ({
+      label: topicName,
+      value: topicName,
     }));
 
   const onSendActionClicked = async () => {
