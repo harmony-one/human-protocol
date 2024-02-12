@@ -5,9 +5,8 @@ import {useNavigate} from "react-router-dom";
 import {signInWithGithub, signInWithGoogle, signInWithTwitter} from '../../firebase/authService';
 import {User, UserCredential} from 'firebase/auth';
 import {toast} from 'react-toastify';
-import {generateWallet, LSAccountKey, useUserContext} from '../../context/UserContext';
-import {Wallet} from 'ethers';
-import {getAccount, postAccount} from '../../api/worker';
+import {useUserContext} from '../../context/UserContext';
+import {getAccount} from '../../api/worker';
 import styled from "styled-components";
 
 const SignInButton = styled(Button)`
@@ -17,20 +16,16 @@ const SignInButton = styled(Button)`
 
 export const HomePage = () => {
   const navigate = useNavigate();
-  // const [email, setEmail] = useState<string>('');
-  // const [password, setPassword] = useState<string>('');
 
   // TODO: unset user upon logout
-  const { wallet, setWallet, currentUser } = useUserContext();
+  const { wallet } = useUserContext();
 
   useEffect(() => {
-    if(currentUser) {
-      console.log(`User wallet: ${wallet}`);
-      if (wallet) {
-        navigate('/feed');
-      }
+    if(wallet) {
+      console.log(`[Home] User wallet address: ${wallet.address}`);
+      navigate('/feed');
     }
-  }, [currentUser, wallet, navigate]);
+  }, [wallet, navigate]);
 
   const handleSignIn = async (provider: string): Promise<void> => {
     let userCredential: UserCredential;
@@ -85,18 +80,8 @@ export const HomePage = () => {
 
   const handlePostSignIn = async (user: User) => {
     if (user.metadata.creationTime === user.metadata.lastSignInTime) { // new user
-      console.log('creating account...', user);
-      await createWallet(user.uid).then((account) => {
-        setWallet(account);
-      });
       navigate('/welcome');
     } else { // existing user
-      console.log('fetching account...', user)
-      await fetchAccount(user.uid).then((account) => {
-        setWallet(account);
-      }).catch(e => {
-        console.error('Failed to get account', e);
-      });
       navigate('/feed');
     }
   };
@@ -120,20 +105,4 @@ export const HomePage = () => {
         <Button onClick={handleEmailSignIn}>Sign in with Email</Button> */}
     </Box>
   );
-}
-
-export const createWallet = async (uid: string): Promise<Wallet> => {
-  const hdWallet = Wallet.createRandom();
-  await postAccount(uid, hdWallet.publicKey, hdWallet.privateKey);
-  window.localStorage.setItem(LSAccountKey, hdWallet.privateKey);
-  return generateWallet(hdWallet.privateKey);
-}
-
-export const fetchAccount = async (uid: string): Promise<Wallet> => {
-  const accountData = await getAccount(uid);
-  if (accountData) {
-    window.localStorage.setItem(LSAccountKey, accountData.privateKey);
-    return generateWallet(accountData.privateKey);
-  }
-  return createWallet(uid)
 }
