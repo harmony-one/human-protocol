@@ -15,7 +15,18 @@ const TopicsContainer = styled(Box)`
     grid-template-columns: repeat(auto-fit, minmax(25%, 1fr));
     //gap: 16px;
     //padding: 16px;
+
     border: 1px solid black;
+
+    // Cells on the right side
+    > div:nth-child(4n) {
+        border-right: 0;
+    }
+
+    // Cells on the bottom
+    > div:nth-child(n + 13) {
+        border-bottom: 0;
+    }
 `
 
 const TopicItemContainer = styled(Box)<{ isSelected?: boolean }>`
@@ -27,6 +38,8 @@ const TopicItemContainer = styled(Box)<{ isSelected?: boolean }>`
     //box-shadow: rgba(0, 0, 0, 0.08) 0 4px 16px;
     box-shadow: none;
     border: 1px solid black;
+    border-top: 0;
+    border-left: 0;
     //border-radius: 4px;
     overflow: hidden;
     display: flex;
@@ -40,7 +53,6 @@ const TopicItemContainer = styled(Box)<{ isSelected?: boolean }>`
 
     ${props => (props.isSelected) && `
       box-shadow: 0px 0px 0px 4px #69fabd inset;
-      // border-color: #69fabd;
     `}
 `
 
