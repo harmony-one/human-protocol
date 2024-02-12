@@ -4,7 +4,6 @@ import { HomePage } from "./pages/home";
 import { AppLayout } from "./components/layout";
 import { FeedPage } from "./pages/feed";
 import AuthMiddleware from "./AuthMiddleware";
-import { MessagePage } from "./pages/message";
 
 export const AppRoutes = () => {
   return <Routes>
@@ -15,7 +14,6 @@ export const AppRoutes = () => {
       <Route index path={''} element={<HomePage />} />
       <Route element={<AuthMiddleware />}>
         <Route path={'feed'} element={<FeedPage />} />
-        <Route path={'message'} element={<MessagePage />} />
       </Route>
     </Route>
   </Routes>
