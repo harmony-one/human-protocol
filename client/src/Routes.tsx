@@ -8,12 +8,12 @@ import { MessagePage } from "./pages/message";
 
 export const AppRoutes = () => {
   return <Routes>
+    <Route path={'welcome'} element={<WelcomePage />} />
     <Route element={<AppLayout />}>
       {/*<Route path={'/'} element={<Navigate to={'/home'} />} />*/}
       {/* TODO: once logged in don't go to HomePage */}
       <Route index path={''} element={<HomePage />} />
       <Route element={<AuthMiddleware />}>
-        <Route path={'welcome'} element={<WelcomePage />} />
         <Route path={'feed'} element={<FeedPage />} />
         <Route path={'message'} element={<MessagePage />} />
       </Route>
