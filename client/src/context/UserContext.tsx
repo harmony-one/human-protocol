@@ -1,6 +1,7 @@
 import {JsonRpcProvider, Wallet} from "ethers";
-import {createContext, Dispatch, ReactNode, SetStateAction, useContext, useEffect, useState} from "react";
-import {getAuth, onAuthStateChanged, User} from "firebase/auth";
+import {createContext, Dispatch, ReactNode, SetStateAction, useContext, useEffect, useMemo, useState} from "react";
+import {getAuth, onAuthStateChanged, signOut, User} from "firebase/auth";
+import {useNavigate} from "react-router-dom";
 
 export const LSAccountKey = 'human_protocol_client_account';
 
@@ -8,6 +9,7 @@ interface UserContextType {
   wallet: Wallet | undefined;
   setWallet: Dispatch<SetStateAction<Wallet | undefined>>;
   currentUser: User | null
+  logout: () => Promise<void>
 }
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
@@ -16,26 +18,31 @@ interface UserProviderProps {
   children: ReactNode;
 }
 
+const privateKeyLS = window.localStorage.getItem(LSAccountKey);
+
 export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
+  const navigate = useNavigate()
   const [wallet, setWallet] = useState<Wallet | undefined>(undefined);
   const [currentUser, setCurrentUser] = useState<User | null>(null)
 
   useEffect(() => {
-    const privateKeyLS = window.localStorage.getItem(LSAccountKey);
     if (privateKeyLS) {
       try {
         const data = getWalletFromPrivateKey(privateKeyLS);
         setWallet(data);
         console.log('[user context] Restored blockchain wallet from private key: ', data.address)
+        navigate('/feed')
       } catch (error) {
         console.error('[user context] Failed to load user wallet from localStorage:', error);
       }
     } else {
       const newWallet = createRandomWallet()
+      setWallet(newWallet)
       window.localStorage.setItem(LSAccountKey, newWallet.privateKey);
       console.log('[user context] Generated new blockchain wallet: ', newWallet.address)
+      navigate('/welcome')
     }
-  }, []);
+  }, [privateKeyLS]);
 
   useEffect(() => {
     const getData = () => {
@@ -50,8 +57,23 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
     getData()
   }, []);
 
+  const logout = async () => {
+    const auth = getAuth();
+    await signOut(auth)
+    navigate('/', { replace: true });
+  }
+
+  const value = useMemo(() => {
+    return {
+      wallet,
+      setWallet,
+      currentUser,
+      logout
+    }
+  }, [wallet, currentUser])
+
   return (
-    <UserContext.Provider value={{ wallet, setWallet, currentUser }}>
+    <UserContext.Provider value={value}>
       {children}
     </UserContext.Provider>
   );

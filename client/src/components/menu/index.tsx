@@ -8,16 +8,7 @@ import { shortenAddress } from '../../utils';
 
 export const AppMenu = () => {
   const navigate = useNavigate();
-  const { wallet, currentUser } = useUserContext();
-
-  const onLogoutClicked = () => {
-    const auth = getAuth();
-    signOut(auth).then(() => {
-      navigate('/')
-    }).catch((e) => {
-      console.error('Failed to logout', e)
-    });
-  }
+  const { wallet, currentUser, logout } = useUserContext();
 
   return <Box pad={'16px'}>
     <Box align={'end'}>
@@ -36,7 +27,7 @@ export const AppMenu = () => {
                 </Typography.Text>
             </Box>
             <Box width={'100px'}>
-                <Button type={'default'} onClick={onLogoutClicked}>
+                <Button type={'default'} onClick={logout}>
                     Logout
                 </Button>
             </Box>
