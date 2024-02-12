@@ -1,7 +1,7 @@
 import {JsonRpcProvider, Wallet} from "ethers";
 import {createContext, Dispatch, ReactNode, SetStateAction, useContext, useEffect, useMemo, useState} from "react";
 import {getAuth, onAuthStateChanged, signOut, User} from "firebase/auth";
-import {useNavigate} from "react-router-dom";
+import {useLocation, useNavigate} from "react-router-dom";
 
 export const LSAccountKey = 'human_protocol_client_account';
 
@@ -21,26 +21,31 @@ interface UserProviderProps {
 const privateKeyLS = window.localStorage.getItem(LSAccountKey);
 
 export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
+  const location = useLocation();
   const [wallet, setWallet] = useState<Wallet | undefined>(undefined);
-  const [currentUser, setCurrentUser] = useState<User | null>(null)
+  const [currentUser, setCurrentUser] = useState<User | null>(null);
 
   useEffect(() => {
-    if (privateKeyLS) {
-      try {
-        const data = getWalletFromPrivateKey(privateKeyLS);
-        setWallet(data);
-        console.log('[user context] Restored blockchain wallet from private key: ', data.address)
-        navigate('/feed')
-      } catch (error) {
-        console.error('[user context] Failed to load user wallet from localStorage:', error);
-      }
+    if (location.pathname === '/auth') {
+      console.log('[user context] /auth route, special handling');
     } else {
-      const newWallet = createRandomWallet()
-      setWallet(newWallet)
-      window.localStorage.setItem(LSAccountKey, newWallet.privateKey);
-      console.log('[user context] Generated new blockchain wallet: ', newWallet.address)
-      navigate('/welcome')
+      if (privateKeyLS) {
+        try {
+          const data = getWalletFromPrivateKey(privateKeyLS);
+          setWallet(data);
+          console.log('[user context] Restored blockchain wallet from private key: ', data.address)
+          navigate('/feed')
+        } catch (error) {
+          console.error('[user context] Failed to load user wallet from localStorage:', error);
+        }
+      } else {
+        const newWallet = createRandomWallet()
+        setWallet(newWallet)
+        window.localStorage.setItem(LSAccountKey, newWallet.privateKey);
+        console.log('[user context] Generated new blockchain wallet: ', newWallet.address)
+        navigate('/welcome')
+      }
     }
   }, [privateKeyLS]);
 
