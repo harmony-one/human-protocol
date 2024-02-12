@@ -1,5 +1,5 @@
-import { JsonRpcProvider, Wallet } from "ethers";
-import { Dispatch, ReactNode, SetStateAction, createContext, useContext, useEffect, useState } from "react";
+import {JsonRpcProvider, Wallet} from "ethers";
+import {createContext, Dispatch, ReactNode, SetStateAction, useContext, useEffect, useState} from "react";
 import {getAuth, onAuthStateChanged, User} from "firebase/auth";
 
 export const LSAccountKey = 'human_protocol_client_account';
@@ -24,11 +24,16 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
     const privateKeyLS = window.localStorage.getItem(LSAccountKey);
     if (privateKeyLS) {
       try {
-        const data = generateWallet(privateKeyLS);
+        const data = getWalletFromPrivateKey(privateKeyLS);
         setWallet(data);
+        console.log('[user context] Restored blockchain wallet from private key: ', data.address)
       } catch (error) {
-        console.error('Failed to load user wallet from localStorage:', error);
+        console.error('[user context] Failed to load user wallet from localStorage:', error);
       }
+    } else {
+      const newWallet = createRandomWallet()
+      window.localStorage.setItem(LSAccountKey, newWallet.privateKey);
+      console.log('[user context] Generated new blockchain wallet: ', newWallet.address)
     }
   }, []);
 
@@ -37,7 +42,7 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
       const data = getAuth()
       setCurrentUser(data.currentUser)
       onAuthStateChanged(data, (data) => {
-        console.log('Auth changed!', data)
+        console.log('[user context] Auth changed:', data)
         setCurrentUser(data);
       });
     }
@@ -60,8 +65,12 @@ export const useUserContext = (): UserContextType => {
   return context;
 };
 
-export const generateWallet = (privateKey: string): Wallet => {
+export const createRandomWallet = (): Wallet => {
+  const hdWallet = Wallet.createRandom();
+  return getWalletFromPrivateKey(hdWallet.privateKey);
+}
+
+const getWalletFromPrivateKey = (privateKey: string): Wallet => {
   const provider = new JsonRpcProvider();
-  const wallet = new Wallet(privateKey, provider);
-  return wallet;
+  return new Wallet(privateKey, provider);
 }
