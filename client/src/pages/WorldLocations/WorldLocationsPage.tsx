@@ -2,14 +2,14 @@ import React, { useState, useEffect } from "react";
 import { MapContainer, TileLayer } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import { collection, query, onSnapshot } from "firebase/firestore";
-import { db } from "./firebase-config";
-import HeatmapLayer from "./HeatmapLayer";
+import { HeatmapLayer } from "./HeatmapLayer";
+import { firebaseClient } from "../../firebase";
 
-function WorldLocationsPage() {
+export function WorldLocationsPage() {
   const [locations, setLocations] = useState<Array<any>>([]);
 
   useEffect(() => {
-    const q = query(collection(db, "messages"));
+    const q = query(collection(firebaseClient.db, "messages"));
     const unsubscribe = onSnapshot(q, (querySnapshot) => {
       const locs = querySnapshot.docs
         .map((doc) => ({
@@ -37,5 +37,3 @@ function WorldLocationsPage() {
     </MapContainer>
   );
 }
-
-export default WorldLocationsPage;

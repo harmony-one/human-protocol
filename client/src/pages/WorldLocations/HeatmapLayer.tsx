@@ -3,9 +3,9 @@ import { useEffect } from "react";
 import { useMap } from "react-leaflet";
 import L from "leaflet";
 import "leaflet.heat";
-import { ILocation } from "../firebase/interfaces";
+import { ILocation } from "../../firebase/interfaces";
 
-const HeatmapLayer = ({ locations }: { locations: ILocation[] }) => {
+export const HeatmapLayer = ({ locations }: { locations: ILocation[] }) => {
   const map = useMap();
 
   useEffect(() => {
@@ -26,5 +26,3 @@ const HeatmapLayer = ({ locations }: { locations: ILocation[] }) => {
 
   return null;
 };
-
-export default HeatmapLayer;

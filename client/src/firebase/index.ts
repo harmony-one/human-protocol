@@ -1,5 +1,5 @@
 import { FirebaseApp, initializeApp } from 'firebase/app';
-import { getFirestore, collection, getDocs, Firestore, setDoc, doc, query, where, WhereFilterOp, getDoc, limitToLast, orderBy, addDoc } from 'firebase/firestore/lite';
+import { getFirestore, collection, getDocs, Firestore, setDoc, doc, query, where, WhereFilterOp, getDoc, limitToLast, orderBy, addDoc } from 'firebase/firestore';
 import { getAnalytics } from "firebase/analytics";
 import { getAuth, Auth } from "firebase/auth";
 // TODO: Add SDKs for Firebase products that you want to use
@@ -8,13 +8,13 @@ import { getAuth, Auth } from "firebase/auth";
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
-    apiKey: "AIzaSyBYDneFqjVr426MgnTiuwfgQO2nc-YYLn4",
-    authDomain: "human-protocol-413614.firebaseapp.com",
-    projectId: "human-protocol-413614",
-    storageBucket: "human-protocol-413614.appspot.com",
-    messagingSenderId: "202612542693",
-    appId: "1:202612542693:web:30c2c9fdbc4166de5c180c",
-    measurementId: "G-3VB7TC31EC"
+    apiKey: process.env.REACT_APP_API_KEY,
+    authDomain: process.env.REACT_APP_AUTH_DOMAIN,
+    projectId: process.env.REACT_APP_PROJECT_ID,
+    storageBucket: process.env.REACT_APP_STORAGE_BUCKET,
+    messagingSenderId: process.env.REACT_APP_MESSAGING_SENDER_ID,
+    appId: process.env.REACT_APP_APP_ID,
+    measurementId: process.env.REACT_APP_MEASUREMENT_ID,
 };
 
 interface GetListParams {

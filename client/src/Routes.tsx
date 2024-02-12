@@ -1,8 +1,13 @@
 import { Link, Route, Routes } from "react-router-dom";
-import { WelcomePage } from "./pages/welcome";
-import { HomePage } from "./pages/home";
+import { WelcomePage } from "./pages/Welcome";
+import { HomePage } from "./pages/Home";
 import { AppLayout } from "./components/layout";
-import { FeedPage } from "./pages/feed";
+import { Messages } from "./pages/Messages";
+import { UserPage } from "./pages/User";
+import { CityPage } from "./pages/City";
+import { TagPage } from "./pages/Tag";
+import { UserWorldLocationsPage, WorldLocationsPage } from "./pages/WorldLocations";
+import { FeedPage } from "./pages/Feed";
 
 export const AppRoutes = () => {
   return (
@@ -12,7 +17,28 @@ export const AppRoutes = () => {
         {/*<Route path={'/'} element={<Navigate to={'/home'} />} />*/}
         <Route path={'/feed'} element={<FeedPage />} />
         <Route path={'/auth'} element={<HomePage />} />
+
+        <Route path="/messages" element={<Messages />} />
+        <Route path="/:username" element={<UserPage />} />
+        <Route path="/city/:city" element={<CityPage />} />
+        <Route path="/tag/:tag" element={<TagPage />} />
+        <Route path="/world-locations" element={<WorldLocationsPage />} />
+        <Route
+          path="/:username/world-locations"
+          element={<UserWorldLocationsPage />}
+        />
       </Route>
     </Routes>
   );
 }
+
+//     <div className="App">
+//       <nav style={{ padding: "10px" }}>
+//         <Link to="/">
+//           <img
+//             src={logo}
+//             alt="Home"
+//             style={{ maxWidth: "100px", cursor: "pointer" }}
+//           />
+//         </Link>
+//       </nav>

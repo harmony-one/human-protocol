@@ -79,7 +79,7 @@ export const HomePage = () => {
     if (user.metadata.creationTime === user.metadata.lastSignInTime) { // new user
       navigate('/welcome');
     } else { // existing user
-      navigate('/feed');
+      navigate('/messages');
     }
   };
 

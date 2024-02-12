@@ -5,17 +5,17 @@ import { useParams } from "react-router-dom";
 import "leaflet/dist/leaflet.css";
 import "leaflet.heat";
 import { collection, query, where, onSnapshot } from "firebase/firestore";
-import { db } from "./firebase-config";
-import HeatmapLayer from "./HeatmapLayer"; // Assuming HeatmapLayer is extracted to its own file
-import { ILocation } from "../firebase/interfaces";
+import { HeatmapLayer } from "./HeatmapLayer"; // Assuming HeatmapLayer is extracted to its own file
+import { ILocation } from "../../firebase/interfaces";
+import { firebaseClient } from "../../firebase";
 
-function UserWorldLocationsPage() {
+export function UserWorldLocationsPage() {
   const { username } = useParams();
   const [locations, setLocations] = useState<Array<ILocation>>([]);
 
   useEffect(() => {
     const q = query(
-      collection(db, "messages"),
+      collection(firebaseClient.db, "messages"),
       where("username", "==", username)
     );
     const unsubscribe = onSnapshot(q, (querySnapshot) => {
@@ -45,5 +45,3 @@ function UserWorldLocationsPage() {
     </MapContainer>
   );
 }
-
-export default UserWorldLocationsPage;

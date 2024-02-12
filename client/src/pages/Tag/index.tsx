@@ -8,18 +8,18 @@ import {
   where,
   orderBy,
 } from "firebase/firestore";
-import { db } from "./firebase-config";
 import { Link } from "react-router-dom";
-import { parseMessage, extractStreet, extractZip } from "./utils";
-import { IMessage } from "../firebase/interfaces";
+import { parseMessage, extractStreet, extractZip } from "../../utils";
+import { IMessage } from "../../firebase/interfaces";
+import { firebaseClient } from "../../firebase";
 
-function TagPage() {
+export function TagPage() {
   const [messages, setMessages] = useState([]);
   const { tag } = useParams(); // This gets the tag from the URL
 
   useEffect(() => {
     const q = query(
-      collection(db, "messages"),
+      collection(firebaseClient.db, "messages"),
       where("hashtags", "array-contains", tag),
       orderBy("timestamp", "desc")
     );
@@ -78,5 +78,3 @@ function TagPage() {
     </div>
   );
 }
-
-export default TagPage;

@@ -8,11 +8,11 @@ import {
   where,
   orderBy,
 } from "firebase/firestore";
-import { db } from "./firebase-config";
 import { Link } from "react-router-dom";
-import { IMessage } from "../firebase/interfaces";
+import { IMessage } from "../../firebase/interfaces";
+import { firebaseClient } from "../../firebase";
 
-function CityPage() {
+export function CityPage() {
   const [messages, setMessages] = useState<Array<any>>([]);
   const { city = '' } = useParams(); // Extract city from URL
 
@@ -20,7 +20,7 @@ function CityPage() {
     // Decode URI component in case city names contain spaces or special characters
     const cityName = decodeURIComponent(city);
     const q = query(
-      collection(db, "messages"),
+      collection(firebaseClient.db, "messages"),
       where("address", "array-contains", cityName),
       orderBy("timestamp", "desc")
     );
@@ -57,5 +57,3 @@ function CityPage() {
     </div>
   );
 }
-
-export default CityPage;

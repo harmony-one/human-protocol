@@ -11,12 +11,12 @@ import {
   getDocs,
   updateDoc,
 } from "firebase/firestore";
-import { db } from "./firebase-config";
 import { Link } from "react-router-dom";
-import { parseMessage, extractStreet, extractZip } from "./utils";
-import worldIcon from "../assets/logos/world-icon192.svg";
-import { driver } from "./neo4jDriver";
-import { ILocation } from "../firebase/interfaces";
+import { parseMessage, extractStreet, extractZip } from "../../utils";
+import worldIcon from "../../assets/logos/world-icon192.svg";
+import { driver } from "../../neo4-driver";
+import { ILocation } from "../../firebase/interfaces";
+import { firebaseClient } from "../../firebase";
 
 // TEMP: Remove when OAuth login is enabled
 // Replace with user chosen username (still save in localStorage maybe)
@@ -87,7 +87,7 @@ const nouns = [
   "Zebra",
 ];
 
-function HomePage() {
+export function Messages() {
   const [text, setText] = useState("");
   const [username, setUsername] = useState("");
   const [messages, setMessages] = useState<Array<any>>([]);
@@ -98,6 +98,7 @@ function HomePage() {
 
   // Retrieve username from localStorage or assign new random username
   useEffect(() => {
+
     const storedUsername = localStorage.getItem("username");
     if (storedUsername) {
       setUsername(storedUsername);
@@ -116,7 +117,7 @@ function HomePage() {
   // Fetch user's interests once username is set
   useEffect(() => {
     if (username) {
-      const interestsRef = collection(db, "interests");
+      const interestsRef = collection(firebaseClient.db, "interests");
       const q = query(interestsRef, where("userID", "==", username));
       getDocs(q).then((querySnapshot) => {
         querySnapshot.forEach((doc) => {
@@ -130,15 +131,15 @@ function HomePage() {
   useEffect(() => {
     let q;
     if (viewMode === "Global") {
-      q = query(collection(db, "messages"), orderBy("timestamp", "desc"));
+      q = query(collection(firebaseClient.db, "messages"), orderBy("timestamp", "desc"));
     } else if (viewMode === "Home" && userTags.length > 0) {
       q = query(
-        collection(db, "messages"),
+        collection(firebaseClient.db, "messages"),
         where("hashtags", "array-contains-any", userTags),
         orderBy("timestamp", "desc")
       );
     } else {
-      q = query(collection(db, "messages"), orderBy("timestamp", "desc"));
+      q = query(collection(firebaseClient.db, "messages"), orderBy("timestamp", "desc"));
     }
 
     const unsubscribe = onSnapshot(q, (querySnapshot) => {
@@ -161,7 +162,7 @@ function HomePage() {
 
   const addMention = async (fromUser: string, toUser: string) => {
     const session = driver.session({ database: 'neo4j' });
-  
+
     try {
       // Create or update the direct mention from 'fromUser' to 'toUser'
       await session.executeWrite((tx: any) =>
@@ -174,7 +175,7 @@ function HomePage() {
           RETURN direct
         `, { fromUser, toUser })
       );
-  
+
       // Check for existing indirect mention and update both to bilateral if present
       const indirectMentionResult = await session.executeWrite((tx: any) =>
         tx.run(`
@@ -183,7 +184,7 @@ function HomePage() {
           RETURN indirect
         `, { fromUser, toUser })
       );
-  
+
       if (indirectMentionResult.records.length > 0 && indirectMentionResult.records[0].get('indirect')) {
         // If an indirect mention exists, update both relationships to 'bilateral'
         await session.executeWrite((tx: any) =>
@@ -205,14 +206,14 @@ function HomePage() {
           `, { fromUser, toUser })
         );
       }
-  
+
       console.log(`Mention relationship created or updated between ${fromUser} and ${toUser}`);
     } catch (error) {
       console.error("Error creating/updating mention relationship:", error);
     } finally {
       await session.close();
     }
-  };  
+  };
 
   const handleSubmit = async (e?: any) => {
     if (e) e.preventDefault();
@@ -242,36 +243,36 @@ function HomePage() {
     };
 
     if (navigator.geolocation) {
-    navigator.geolocation.getCurrentPosition(async (position) => {
-      const { latitude, longitude } = position.coords;
-      try {
-        const response = await axios.get(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`);
-        const addressComponents = response.data.address;
-        const formattedAddress = {
-          house_number: addressComponents.house_number || '',
-          road: addressComponents.road || '',
-          city: addressComponents.city || addressComponents.town || addressComponents.village || '',
-          state: addressComponents.state || '',
-          postcode: addressComponents.postcode || '',
-          country: addressComponents.country || ''
-        };
-        locationData.latitude = position.coords.latitude;
-        locationData.longitude = position.coords.longitude;
-        locationData.address = `${formattedAddress.house_number} ${formattedAddress.road}, ${formattedAddress.city}, ${formattedAddress.state}, ${formattedAddress.postcode}, ${formattedAddress.country}`;
-      } catch (error) {
-        console.error("Error fetching address: ", error);
-      }
-      finally {
+      navigator.geolocation.getCurrentPosition(async (position) => {
+        const { latitude, longitude } = position.coords;
+        try {
+          const response = await axios.get(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`);
+          const addressComponents = response.data.address;
+          const formattedAddress = {
+            house_number: addressComponents.house_number || '',
+            road: addressComponents.road || '',
+            city: addressComponents.city || addressComponents.town || addressComponents.village || '',
+            state: addressComponents.state || '',
+            postcode: addressComponents.postcode || '',
+            country: addressComponents.country || ''
+          };
+          locationData.latitude = position.coords.latitude;
+          locationData.longitude = position.coords.longitude;
+          locationData.address = `${formattedAddress.house_number} ${formattedAddress.road}, ${formattedAddress.city}, ${formattedAddress.state}, ${formattedAddress.postcode}, ${formattedAddress.country}`;
+        } catch (error) {
+          console.error("Error fetching address: ", error);
+        }
+        finally {
+          await addMessage(locationData);
+        }
+      }, async () => {
+        // Error callback or when access to location is denied
         await addMessage(locationData);
-      }
-    }, async () => {
-      // Error callback or when access to location is denied
+      });
+    } else {
+      console.error('Geolocation is not supported by your browser');
       await addMessage(locationData);
-    });
-      } else {
-        console.error('Geolocation is not supported by your browser');
-        await addMessage(locationData);
-      };
+    };
   };
 
   const handleViewModeChange = (mode: string) => (event: MouseEvent<HTMLButtonElement>) => {
@@ -298,10 +299,10 @@ function HomePage() {
     };
 
     try {
-      await addDoc(collection(db, "messages"), message);
+      await addDoc(collection(firebaseClient.db, "messages"), message);
       // After successful message addition, update user's interests with hashtags
       if (hashtags.length > 0) {
-        const interestsRef = collection(db, "interests");
+        const interestsRef = collection(firebaseClient.db, "interests");
         const q = query(interestsRef, where("userID", "==", username));
         const querySnapshot = await getDocs(q);
         if (querySnapshot.empty) {
@@ -365,17 +366,15 @@ function HomePage() {
         )}
         <div style={{ margin: "10px 0" }}>
           <button
-            className={`button ${
-              viewMode === "Global" ? "button-active" : "button-inactive"
-            }`}
+            className={`button ${viewMode === "Global" ? "button-active" : "button-inactive"
+              }`}
             onClick={handleViewModeChange("Global")}
           >
             Global
           </button>
           <button
-            className={`button ${
-              viewMode === "Home" ? "button-active" : "button-inactive"
-            }`}
+            className={`button ${viewMode === "Home" ? "button-active" : "button-inactive"
+              }`}
             onClick={handleViewModeChange("Home")}
           >
             Home
@@ -423,5 +422,3 @@ function HomePage() {
     </div>
   );
 }
-
-export default HomePage;

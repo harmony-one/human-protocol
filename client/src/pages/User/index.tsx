@@ -2,13 +2,13 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { collection, query, onSnapshot, where } from "firebase/firestore";
-import { db } from "./firebase-config";
 import { Link } from "react-router-dom";
-import { parseMessage, extractStreet, extractZip } from "./utils";
-import worldIcon from "../assets/logos/world-icon192.svg";
-import { driver } from './neo4jDriver';
+import { parseMessage, extractStreet, extractZip } from "../../utils";
+import worldIcon from "../../assets/logos/world-icon192.svg";
+import { driver } from '../../neo4-driver';
+import { firebaseClient } from "../../firebase";
 
-function UserPage() {
+export function UserPage() {
   const [messages, setMessages] = useState<Array<any>>([]);
   const [viewMode, setViewMode] = useState("posts"); // 'posts' or 'mentions'
   const [topHashtags, setTopHashtags] = useState<Array<any>>([]);
@@ -20,11 +20,11 @@ function UserPage() {
     // Fetch posts or mentions based on viewMode
     let q;
     if (viewMode === "posts") {
-      q = query(collection(db, "messages"), where("username", "==", username));
+      q = query(collection(firebaseClient.db, "messages"), where("username", "==", username));
     } else {
       // 'mentions'
       q = query(
-        collection(db, "messages"),
+        collection(firebaseClient.db, "messages"),
         where("mentions", "array-contains", username)
       );
     }
@@ -227,5 +227,3 @@ function UserPage() {
     </div>
   );
 }
-
-export default UserPage;
