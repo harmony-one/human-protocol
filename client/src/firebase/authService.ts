@@ -1,5 +1,5 @@
 import { firebaseClient } from ".";
-import { signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, GithubAuthProvider, TwitterAuthProvider, UserCredential } from 'firebase/auth';
+import { signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, GithubAuthProvider, TwitterAuthProvider, UserCredential, FacebookAuthProvider } from 'firebase/auth';
 
 export const signInWithEmail = async (email: string, password: string): Promise<UserCredential> => {
   try {
@@ -23,5 +23,10 @@ export const signInWithTwitter = async (): Promise<UserCredential> => {
 
 export const signInWithGithub = async (): Promise<UserCredential> => {
   const provider = new GithubAuthProvider();
+  return signInWithPopup(firebaseClient.auth, provider);
+};
+
+export const signInWithFacebook = async (): Promise<UserCredential> => {
+  const provider = new FacebookAuthProvider();
   return signInWithPopup(firebaseClient.auth, provider);
 };

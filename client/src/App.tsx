@@ -10,14 +10,14 @@ import { UserProvider } from './context/UserContext';
 
 function App() {
   return (
-    <UserProvider>
-      <Grommet full>
-        <BrowserRouter>
+    <Grommet full>
+      <BrowserRouter>
+        <UserProvider>
           <AppRoutes />
-        </BrowserRouter>
-        <ToastContainer />
-      </Grommet>
-    </UserProvider>
+        </UserProvider>
+      </BrowserRouter>
+      <ToastContainer />
+    </Grommet>
   );
 }
 
