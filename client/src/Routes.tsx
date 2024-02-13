@@ -1,13 +1,13 @@
 import { Link, Route, Routes } from "react-router-dom";
-import { WelcomePage } from "./pages/Welcome";
-import { HomePage } from "./pages/Home";
+import { WelcomePage } from "./pages/welcome";
+import { HomePage } from "./pages/home";
 import { AppLayout } from "./components/layout";
 import { Messages } from "./pages/Messages";
 import { UserPage } from "./pages/User";
 import { CityPage } from "./pages/City";
 import { TagPage } from "./pages/Tag";
 import { UserWorldLocationsPage, WorldLocationsPage } from "./pages/WorldLocations";
-import { FeedPage } from "./pages/Feed";
+import { FeedPage } from "./pages/feed";
 
 export const AppRoutes = () => {
   return (
