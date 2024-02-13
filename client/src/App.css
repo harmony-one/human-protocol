@@ -1,0 +1,213 @@
+.App {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  min-height: 100vh;
+  font-family: Arial, sans-serif;
+  padding: 20px;
+}
+
+input,
+.input-with-icon textarea {
+  font-size: 16px;
+  padding: 10px 40px 10px 10px;
+  margin: 5px 0;
+  border: 2px solid #e0e0e0;
+  background-color: #fff;
+  border-radius: 4px;
+  width: 100%;
+  box-sizing: border-box;
+  resize: none;
+  overflow-y: hidden;
+}
+
+.submission-content img {
+  max-width: 100%; /* Adjust the percentage or set a specific pixel value */
+  max-height: 300px; /* Set a max height that fits your layout */
+  object-fit: cover; /* This will make sure to cover the area without stretching the image */
+}
+
+.messages-container {
+  max-height: 400px;
+  overflow-y: auto;
+  width: 100%;
+  max-width: 600px;
+  border: 1px solid #ccc;
+  margin-top: 20px;
+  padding: 10px;
+}
+
+.submission {
+  width: 600px;
+  max-width: 100%;
+  border: 1px solid #ddd;
+  padding: 20px;
+  border-radius: 5px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  background-color: #fff;
+  margin-bottom: 10px;
+  position: relative;
+  overflow-wrap: break-word;
+  align-items: center;
+}
+
+.submission-header {
+  position: absolute;
+  top: -10px;
+  left: 20px;
+  background-color: #fff;
+  padding: 0 5px;
+  border-radius: 3px;
+  font-weight: bold;
+  color: #007bff;
+}
+
+.input-with-icon {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 80%;
+  max-width: 800px;
+  margin: auto;
+}
+
+.input-with-icon .submit-icon {
+  cursor: pointer;
+  position: relative;
+  right: 35px;
+  color: #007bff;
+  font-size: 20px;
+  background-color: transparent;
+}
+
+.submission p,
+.submission small {
+  color: #333;
+  margin: 0 0 10px 0;
+  font-size: 16px;
+}
+
+.submission small {
+  color: #666;
+  font-size: 12px;
+}
+
+.username-link,
+.username-link:visited,
+a[href^="/"]:not(.main-username-link),
+a[href^="/tag/"] {
+  text-decoration: none;
+  color: #007bff;
+  cursor: pointer;
+}
+
+.main-username-link {
+  text-decoration: none;
+  color: #000;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.button-group {
+  margin-bottom: 40px;
+}
+
+.button {
+  display: inline-block;
+  text-align: center;
+  border: none;
+  margin: 0 10px;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  width: 120px;
+  height: 40px;
+  line-height: 40px;
+  font-size: 16px;
+  color: white;
+}
+
+.button-active {
+  background-color: #007bff;
+  transform: scale(1.05);
+}
+
+.button-inactive {
+  background-color: rgba(0, 123, 255, 0.5);
+  opacity: 0.7;
+  transform: scale(1);
+}
+
+.world-icon-link {
+  position: relative;
+  top: 0px;
+  right: 0px;
+}
+
+.world-icon-link-user-page {
+  position: relative;
+  top: 0px;
+  right: 0px;
+}
+
+@media (max-width: 600px) {
+  html,
+  body {
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+  }
+
+  .button {
+    padding: 8px 15px;
+    font-size: 14px;
+  }
+
+  .App {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 10px;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  input,
+  .input-with-icon textarea {
+    width: 100%;
+    margin: 5px 0;
+    padding: 10px;
+    box-sizing: border-box;
+  }
+
+  .messages-container,
+  .submission {
+    width: 100vw;
+    box-sizing: border-box;
+    padding: 10px;
+    margin: 0 auto;
+    margin-bottom: 20px;
+  }
+
+  .input-with-icon {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    position: relative;
+  }
+
+  .input-with-icon .submit-icon {
+    position: absolute;
+    right: 30px;
+    pointer-events: auto;
+  }
+
+  .input-with-icon textarea {
+    width: calc(100% - 40px);
+    padding: 10px;
+    padding-right: 50px;
+    box-sizing: border-box;
+  }
+}

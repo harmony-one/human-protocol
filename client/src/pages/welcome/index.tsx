@@ -101,7 +101,7 @@ export const WelcomePage: React.FC = () => {
       postUserTopics(wallet.address, selectedTopics)
         .then(() => {
           // toast.success(`Added ${selectedTopics.length} topics!`, { autoClose: 10000 });
-          navigate('/feed');
+          navigate('/messages');
         })
         .catch(e => {
           toast.error(`Cannot add topics: ${e.message}`, { autoClose: 1000 });

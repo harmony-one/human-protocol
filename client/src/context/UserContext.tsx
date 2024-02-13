@@ -35,7 +35,7 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
           const data = getWalletFromPrivateKey(privateKeyLS);
           setWallet(data);
           console.log('[user context] Restored blockchain wallet from private key: ', data.address)
-          navigate('/feed')
+          navigate('/messages')
         } catch (error) {
           console.error('[user context] Failed to load user wallet from localStorage:', error);
         }
