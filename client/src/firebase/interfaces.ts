@@ -12,4 +12,5 @@ export interface IMessage {
     address: string;
     latitude: string;
     longitude: string;
+    images: string[];
 }

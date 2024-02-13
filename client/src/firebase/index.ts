@@ -2,6 +2,7 @@ import { FirebaseApp, initializeApp } from 'firebase/app';
 import { getFirestore, collection, getDocs, Firestore, setDoc, doc, query, where, WhereFilterOp, getDoc, limitToLast, orderBy, addDoc } from 'firebase/firestore';
 import { getAnalytics } from "firebase/analytics";
 import { getAuth, Auth } from "firebase/auth";
+import { FirebaseStorage, getStorage } from 'firebase/storage';
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -27,12 +28,15 @@ class FirebaseClient {
     app: FirebaseApp;
     db: Firestore;
     auth: Auth;
+    storage: FirebaseStorage;
 
     constructor() {
         // Initialize Firebase
         this.app = initializeApp(firebaseConfig);
         this.db = getFirestore(this.app);
         this.auth = getAuth(this.app);
+        this.storage = getStorage(this.app);
+
         //const analytics = getAnalytics(app);
     }
 

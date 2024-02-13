@@ -24,11 +24,11 @@ export function TagPage() {
       orderBy("timestamp", "desc")
     );
     const unsubscribe = onSnapshot(q, (querySnapshot) => {
-      const taggedMessages: any = querySnapshot.docs.map((doc) => ({
+      const taggedMessages = querySnapshot.docs.map((doc) => ({
         ...doc.data(),
         id: doc.id,
       }));
-      setMessages(taggedMessages);
+      setMessages(taggedMessages as any);
     });
 
     return () => unsubscribe();
@@ -48,30 +48,41 @@ export function TagPage() {
             <p
               dangerouslySetInnerHTML={{ __html: parseMessage(message.text) }}
             ></p>
-            <small>
-              {new Date(message.timestamp).toLocaleDateString("en-US", {
-                month: "numeric",
-                day: "numeric",
-              }) +
-                " " +
-                new Date(message.timestamp).toLocaleTimeString("en-US", {
-                  hour: "numeric",
-                  minute: "2-digit",
-                  hour12: true,
+            {message.images &&
+              message.images.map((imageUrl: string) => (
+                <img
+                  key={imageUrl}
+                  src={imageUrl}
+                  alt="Posted"
+                  className="submission-image"
+                />
+              ))}
+            <div className="submission-timestamp">
+              <small>
+                {new Date(message.timestamp).toLocaleDateString("en-US", {
+                  month: "numeric",
+                  day: "numeric",
                 }) +
-                " "}
-              {/* Extract street and zip and check if both exist, else display "No Location" */}
-              -{" "}
-              {(() => {
-                const street = extractStreet(message.address);
-                const zip = extractZip(message.address);
-                if (street && zip) {
-                  return `${street}, ${zip}`;
-                } else {
-                  return "No Location";
-                }
-              })()}
-            </small>
+                  " " +
+                  new Date(message.timestamp).toLocaleTimeString("en-US", {
+                    hour: "numeric",
+                    minute: "2-digit",
+                    hour12: true,
+                  })}{" "}
+                {/* Added a space inside the curly braces */}
+              </small>
+              <small>
+                {(() => {
+                  const street = extractStreet(message.address);
+                  const zip = extractZip(message.address);
+                  if (street && zip) {
+                    return ` ${street}, ${zip}`; // Ensure there is a space at the start of this string
+                  } else {
+                    return "No Location";
+                  }
+                })()}
+              </small>
+            </div>
           </div>
         </div>
       ))}

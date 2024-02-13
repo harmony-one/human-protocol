@@ -5,15 +5,16 @@ import { collection, query, onSnapshot, where } from "firebase/firestore";
 import { Link } from "react-router-dom";
 import { parseMessage, extractStreet, extractZip } from "../../utils";
 import worldIcon from "../../assets/logos/world-icon192.svg";
-import { driver } from '../../neo4-driver';
+import { driver } from "../../neo4-driver";
+import { IMessage } from "../../firebase/interfaces";
 import { firebaseClient } from "../../firebase";
 
 export function UserPage() {
-  const [messages, setMessages] = useState<Array<any>>([]);
-  const [viewMode, setViewMode] = useState("posts"); // 'posts' or 'mentions'
-  const [topHashtags, setTopHashtags] = useState<Array<any>>([]);
+  const [messages, setMessages] = useState<any>([]);
+  const [viewMode, setViewMode] = useState<any>("posts"); // 'posts' or 'mentions'
+  const [topHashtags, setTopHashtags] = useState<any>([]);
   const { username } = useParams();
-  const [connections, setConnections] = useState<Array<any>>([]);
+  const [connections, setConnections] = useState<any>([]);
   const viewingUsername = localStorage.getItem("username");
 
   useEffect(() => {
@@ -50,57 +51,83 @@ export function UserPage() {
     const fetchConnections = async () => {
       if (viewingUsername === username) {
         // Do not display connections for the user viewing their own profile
-        setConnections([]);
+        setConnections("");
         return;
       }
-    
+
       const session = driver.session({ database: "neo4j" });
       try {
         const result = await session.executeRead(async (tx: any) => {
-          return tx.run(`
-            MATCH path = shortestPath((startUser:User {username: $viewingUsername})-[:MENTIONS*]->(endUser:User {username: $username}))
-            UNWIND nodes(path) AS node
-            UNWIND relationships(path) AS rel
-            WITH collect(DISTINCT node.username) AS usernames, collect(DISTINCT rel.type) AS types
-            RETURN usernames, types
-          `, { viewingUsername, username });
+          return tx.run(
+            `
+          MATCH path=shortestPath((userA:User {username: $viewingUsername})-[*]-(userB:User {username: $username}))
+          UNWIND NODES(path) AS n
+          UNWIND RELATIONSHIPS(path) AS r
+          WITH 
+              [node IN NODES(path) | 
+                  CASE 
+                      WHEN 'User' IN LABELS(node) THEN node.username 
+                      WHEN 'Hashtag' IN LABELS(node) THEN node.name 
+                      ELSE null 
+                  END] AS nodeDetails,
+              [rel IN RELATIONSHIPS(path) | rel.type] AS connectionTypes
+          RETURN nodeDetails, connectionTypes
+          `,
+            { viewingUsername, username }
+          );
         });
-    
+
+        console.log(result);
+
         if (result.records.length > 0) {
           const records = result.records[0];
-          const types = records.get('types');
-          const usernames = records.get('usernames');
-          let connectionPath = usernames.map((username: string, i: number) => {
-            let arrow = '';
-            if (i < types.length) {
-              switch (types[i]) {
-                case 'direct':
-                  arrow = '→';
-                  break;
-                case 'indirect':
-                  arrow = '←';
-                  break;
-                case 'bilateral':
-                  arrow = '↔';
-                  break;
-                default:
-                  arrow = '';
-              }
+          const types = records.get("nodeDetails");
+          console.log(types);
+          const names = records.get("connectionTypes");
+          console.log(names);
+
+          let output = [];
+
+          for (let i = 0; i < types.length; i++) {
+            output.push(types[i]);
+            if (i < names.length) {
+              output.push(names[i]);
             }
-            return `@${username} ${arrow}`;
-          }).join(' ').trim();
-    
+          }
+
+          console.log(output);
+          
+          let connectionPath = ''
+
+          output.forEach(i => {
+            if (i === 'indirect') {
+              connectionPath += ' ← ';
+            } else if (i === 'direct') {
+              connectionPath += ' → ';
+            } else if (i === 'bilateral') {
+              connectionPath += ' ↔ ';
+            } else if (i === 'hashtag') {
+              // skip
+            } else if (i.startsWith('#')) {
+              connectionPath += ' -' + i + '- ';
+            } else {
+              connectionPath += '@' + i;
+            }
+          });
+          
+          console.log(connectionPath);
+
           setConnections(connectionPath);
         } else {
-          setConnections([]);
+          setConnections("No connection path found.");
         }
       } catch (error) {
         console.error("Failed to fetch connections:", error);
       } finally {
         await session.close();
       }
-    };    
-    
+    };
+
     fetchConnections();
 
     return () => {
@@ -149,9 +176,9 @@ export function UserPage() {
         />
       </Link>
       <div>
-      {viewingUsername !== username && connections ? (
-        <div>{`${connections}`}</div>
-      ) : null}
+        {viewingUsername !== username && connections ? (
+          <div>{`${connections}`}</div>
+        ) : null}
       </div>
       <h2>{viewMode === "posts" ? `@${username}` : `@${username}`}</h2>
       <div
@@ -160,7 +187,7 @@ export function UserPage() {
         }}
       >
         <button
-          //@ts-ignore
+        //@ts-ignore
           style={viewMode === "posts" ? activeButtonStyle : inactiveButtonStyle}
           onClick={() => setViewMode("posts")}
         >
@@ -178,7 +205,7 @@ export function UserPage() {
       </div>
       {topHashtags.length > 0 && (
         <div>
-          {topHashtags.map(([hashtag, count]) => (
+          {topHashtags.map(([hashtag, count]: any) => (
             <div key={hashtag} style={{ margin: "10px 0" }}>
               <span style={{ fontWeight: "bold" }}>#{hashtag}</span>{" "}
               <span style={{ color: "#999" }}>({count})</span>
@@ -187,7 +214,7 @@ export function UserPage() {
         </div>
       )}
       {messages.length > 0 ? (
-        messages.map((message) => (
+        messages.map((message: IMessage) => (
           <div key={message.id} className="submission">
             <div className="submission-header">
               <Link to={`/${message.username}`} className="username-link">
@@ -198,24 +225,41 @@ export function UserPage() {
               <p
                 dangerouslySetInnerHTML={{ __html: parseMessage(message.text) }}
               ></p>
-              <small>
-                {new Date(message.timestamp).toLocaleDateString("en-US", {
-                  month: "numeric",
-                  day: "numeric",
-                }) +
-                  " " +
-                  new Date(message.timestamp).toLocaleTimeString("en-US", {
-                    hour: "numeric",
-                    minute: "2-digit",
-                    hour12: true,
-                  })}{" "}
-                -{" "}
-                {(() => {
-                  const street = extractStreet(message.address);
-                  const zip = extractZip(message.address);
-                  return street && zip ? `${street}, ${zip}` : "No Location";
-                })()}
-              </small>
+              {message.images &&
+                message.images.map((imageUrl) => (
+                  <img
+                    key={imageUrl}
+                    src={imageUrl}
+                    alt="Posted"
+                    className="submission-image"
+                  />
+                ))}
+              <div className="submission-timestamp">
+                <small>
+                  {new Date(message.timestamp).toLocaleDateString("en-US", {
+                    month: "numeric",
+                    day: "numeric",
+                  }) +
+                    " " +
+                    new Date(message.timestamp).toLocaleTimeString("en-US", {
+                      hour: "numeric",
+                      minute: "2-digit",
+                      hour12: true,
+                    })}{" "}
+                  {/* Added a space inside the curly braces */}
+                </small>
+                <small>
+                  {(() => {
+                    const street = extractStreet(message.address);
+                    const zip = extractZip(message.address);
+                    if (street && zip) {
+                      return ` ${street}, ${zip}`; // Ensure there is a space at the start of this string
+                    } else {
+                      return "No Location";
+                    }
+                  })()}
+                </small>
+              </div>
             </div>
           </div>
         ))
