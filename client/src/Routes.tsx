@@ -8,6 +8,7 @@ import { CityPage } from "./pages/City";
 import { TagPage } from "./pages/Tag";
 import { UserWorldLocationsPage, WorldLocationsPage } from "./pages/WorldLocations";
 import { FeedPage } from "./pages/feed";
+import {UserProfile} from "./pages/profile";
 
 export const AppRoutes = () => {
   return (
@@ -17,6 +18,7 @@ export const AppRoutes = () => {
         {/*<Route path={'/'} element={<Navigate to={'/home'} />} />*/}
         <Route path={'/feed'} element={<FeedPage />} />
         <Route path={'/auth'} element={<HomePage />} />
+        {/*<Route path={'/profile'} element={<UserProfile />} />*/}
 
         <Route path="/messages" element={<Messages />} />
         <Route path="/:username" element={<UserPage />} />
