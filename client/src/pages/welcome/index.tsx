@@ -7,8 +7,7 @@ import styled from "styled-components";
 import {useNavigate} from "react-router-dom";
 import { useUserContext } from '../../context/UserContext';
 import {UserTopic} from "../../types";
-import {message, Typography} from 'antd';
-import {capitalizeString} from "../../utils";
+import {message, Typography, Spin} from 'antd';
 
 const TopicsContainer = styled(Box)`
     display: grid;
@@ -98,17 +97,21 @@ export const WelcomePage: React.FC = () => {
   const navigate = useNavigate();
   const [messageApi, contextHolder] = message.useMessage();
   const [selectedTopics, setSelectedTopics] = useState<string[]>([]);
+  const [isTopicsUpdating, setTopicsUpdating] = useState(false)
 
   useEffect(() => {
     if (selectedTopics.length === 4 && wallet?.address) {
+      setTopicsUpdating(true)
       postUserTopics(wallet.address, selectedTopics)
         .then(() => {
           // toast.success(`Added ${selectedTopics.length} topics!`, { autoClose: 10000 });
           navigate('/messages');
         })
         .catch(e => {
-          toast.error(`Cannot add topics: ${e.message}`, { autoClose: 1000 });
-        });
+          toast.error(`Cannot add topics: ${e.message}`, { autoClose: 10000 });
+        }).finally(() => {
+        setTopicsUpdating(false)
+      });
     }
   }, [selectedTopics, wallet?.address, navigate]);
 
@@ -146,16 +149,18 @@ export const WelcomePage: React.FC = () => {
   return (
     <Box pad="medium">
       {contextHolder}
-      <TopicsContainer>
-        {TopicsList.map(topic => (
-          <TopicItem
-            key={topic.name}
-            topic={topic}
-            isSelected={selectedTopics.includes(topic.name)}
-            onClick={() => handleTopicClick(topic)}
-          />
-        ))}
-      </TopicsContainer>
+      <Spin spinning={isTopicsUpdating} size={'large'}>
+        <TopicsContainer>
+          {TopicsList.map(topic => (
+            <TopicItem
+              key={topic.name}
+              topic={topic}
+              isSelected={selectedTopics.includes(topic.name)}
+              onClick={() => handleTopicClick(topic)}
+            />
+          ))}
+        </TopicsContainer>
+      </Spin>
     </Box>
   );
 };
