@@ -3,19 +3,21 @@ import { getFirestore, collection, getDocs, Firestore, setDoc, doc, query, where
 import { getAnalytics } from "firebase/analytics";
 import { getAuth, Auth } from "firebase/auth";
 import { FirebaseStorage, getStorage } from 'firebase/storage';
+import config from '../config';
+
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
-    apiKey: process.env.REACT_APP_API_KEY,
-    authDomain: process.env.REACT_APP_AUTH_DOMAIN,
-    projectId: process.env.REACT_APP_PROJECT_ID,
-    storageBucket: process.env.REACT_APP_STORAGE_BUCKET,
-    messagingSenderId: process.env.REACT_APP_MESSAGING_SENDER_ID,
-    appId: process.env.REACT_APP_APP_ID,
-    measurementId: process.env.REACT_APP_MEASUREMENT_ID,
+    apiKey: config.firebase.apiKey,
+    authDomain: config.firebase.authDomain,
+    projectId: config.firebase.projectId,
+    storageBucket: config.firebase.storageBucket,
+    messagingSenderId: config.firebase.messagingSenderId,
+    appId: config.firebase.appId,
+    measurementId: config.firebase.measurementId,
 };
 
 interface GetListParams {
