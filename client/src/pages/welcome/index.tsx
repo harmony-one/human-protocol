@@ -44,21 +44,24 @@ const TopicItemContainer = styled(Box)<{ isSelected?: boolean }>`
     display: flex;
     justify-content: center;
     align-items: center;
-    transition: transform 250ms;
+    transition: transform 250ms, filter 250ms;
+    filter: grayscale(1);
 
-    // &:hover {
-    //     transform: scale(1.04);
-    // }
+     //&:hover {
+     //    filter: grayscale(0);
+     //}
 
     ${props => (props.isSelected) && `
       box-shadow: 0px 0px 0px 4px #69fabd inset;
+      filter: grayscale(0);
     `}
 `
 
 
 const TopicItemImage = styled.img`
-  max-width: 40%;
-  max-height: 40%;
+    max-width: 40%;
+    max-height: 40%;
+    width: max(40%, 140px);
 `;
 
 const TopicItemAlias = styled(Box)`
