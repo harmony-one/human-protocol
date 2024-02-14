@@ -136,11 +136,11 @@ export const WelcomePage: React.FC = () => {
       return [...prevSelectedTopics, name];
     });
 
-    if(!selectedTopics.includes(name)) {
-      topicSelectedNotification(name)
-    } else {
-      messageApi.destroy('topic')
-    }
+    // if(!selectedTopics.includes(name)) {
+    //   topicSelectedNotification(name)
+    // } else {
+    //   messageApi.destroy('topic')
+    // }
   };
 
   return (
