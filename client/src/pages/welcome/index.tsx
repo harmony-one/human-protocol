@@ -76,12 +76,15 @@ interface TopicItemProps {
 
 const TopicItem = (props: TopicItemProps) => {
   const { topic, isSelected, onClick } = props
+
+  const prefix = topic.type === 'blockchain' ? '$' : '#'
+
   return (
     <TopicItemContainer isSelected={isSelected} onClick={onClick}>
       <TopicItemImage src={topic.logo} alt={`${topic.name} logo`} />
       <TopicItemAlias>
         <Typography.Text style={{ fontSize: 'max(1.8vw, 18px)', fontWeight: 500 }}>
-          {capitalizeString(topic.alias)}
+          {prefix}{topic.name}
         </Typography.Text>
       </TopicItemAlias>
     </TopicItemContainer>

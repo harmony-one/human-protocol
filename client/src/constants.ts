@@ -17,20 +17,20 @@ import zkGame from './assets/logos/zkGame.svg';
 import {UserTopic} from "./types";
 
 export const TopicsList: UserTopic[] = [
-  { name: 'arbitrum', logo: arbitrum, alias: 'Ar' },
-  { name: 'base', logo: base, alias: 'B' },
-  { name: 'boredApeYachtClub', logo: boredApeYachtClub, alias: 'Ba' },
-  { name: 'compound', logo: compound, alias: 'Co' },
-  { name: 'cryptopunks', logo: cryptoPunks, alias: 'Cp' },
-  { name: 'ethDenver', logo: ethDenver, alias: 'Ed' },
-  { name: 'ethereum', logo: ethereum, alias: 'Et' },
-  { name: 'gnosisSafe', logo: gnosis, alias: 'Gs' },
-  { name: 'harmony', logo: harmony, alias: 'H1' },
-  { name: 'metamask', logo: metamask, alias: 'Mm' },
-  { name: 'opensea', logo: openSea, alias: 'Os' },
-  { name: 'optimism', logo: optimism, alias: 'Op' },
-  { name: 'polygon', logo: polygon, alias: 'Pg' },
-  { name: 'sporkDao', logo: sporkDao, alias: 'Sd' },
-  { name: 'uniswap', logo: uniswap, alias: 'Us' },
-  { name: 'zksync', logo: zkGame, alias: 'Zs' }
+  { name: 'arb', logo: arbitrum, type: 'blockchain' },
+  { name: 'base', logo: base, type: 'blockchain' },
+  { name: 'boredApeYachtClub', logo: boredApeYachtClub, type: 'nft' },
+  { name: 'comp', logo: compound, type: 'blockchain' },
+  { name: 'cryptopunks', logo: cryptoPunks, type: 'nft' },
+  { name: 'ethDenver', logo: ethDenver, type: 'event' },
+  { name: 'eth', logo: ethereum, type: 'blockchain' },
+  { name: 'gnosisSafe', logo: gnosis, type: 'app' },
+  { name: 'one', logo: harmony, type: 'blockchain' },
+  { name: 'metamask', logo: metamask, type: 'app' },
+  { name: 'opensea', logo: openSea, type: 'nft' },
+  { name: 'op', logo: optimism, type: 'blockchain' },
+  { name: 'matic', logo: polygon, type: 'blockchain' },
+  { name: 'sporkDao', logo: sporkDao, type: 'dao' },
+  { name: 'uniswap', logo: uniswap, type: 'app' },
+  { name: 'zksync', logo: zkGame, type: 'protocol' }
 ];
