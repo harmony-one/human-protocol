@@ -83,7 +83,7 @@ const TopicItem = (props: TopicItemProps) => {
     <TopicItemContainer isSelected={isSelected} onClick={onClick}>
       <TopicItemImage src={topic.logo} alt={`${topic.name} logo`} />
       <TopicItemAlias>
-        <Typography.Text style={{ fontSize: 'max(1.8vw, 18px)', fontWeight: 500 }}>
+        <Typography.Text style={{ fontSize: 'min(2vw, 18px)', fontWeight: 400 }}>
           {prefix}{topic.name}
         </Typography.Text>
       </TopicItemAlias>
