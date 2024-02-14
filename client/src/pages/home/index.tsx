@@ -2,12 +2,13 @@ import {useEffect} from 'react'
 import { Box } from "grommet";
 import { Button, Typography } from 'antd';
 import {useNavigate} from "react-router-dom";
-import {signInWithGithub, signInWithGoogle, signInWithTwitter, signInWithFacebook} from '../../firebase/authService';
+import {signInWithGithub, signInWithGoogle, signInWithTwitter, signInWithFacebook } from '../../firebase/authService';
 import {User, UserCredential} from 'firebase/auth';
 import {toast} from 'react-toastify';
 import {useUserContext} from '../../context/UserContext';
 import {getAccount} from '../../api/worker';
 import styled from "styled-components";
+import Auth0Login from '../../oauth/Auth0Login';
 
 const SignInButton = styled(Button)`
     font-size: 16px;
@@ -100,6 +101,7 @@ export const HomePage = () => {
         <SignInButton onClick={() => handleSignIn('facebook')}>
           Facebook
         </SignInButton>
+        <Auth0Login />
         {/* <Input placeholder="Email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
         <Input placeholder="Password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
         <Button onClick={handleEmailSignIn}>Sign in with Email</Button> */}
