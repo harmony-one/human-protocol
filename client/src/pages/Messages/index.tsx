@@ -20,6 +20,10 @@ import { driver } from "../../neo4-driver";
 import { firebaseClient } from "../../firebase";
 import { ILocation, IMessage } from "../../firebase/interfaces";
 
+import { useUserContext } from "../../context/UserContext";
+import { useAuth0 } from '@auth0/auth0-react';
+import { shortenAddress } from '../../utils';
+
 // TEMP: Remove when OAuth login is enabled
 // Replace with user chosen username (still save in localStorage maybe)
 const adjectives = [
@@ -96,6 +100,7 @@ const hiddenFileInputStyle = {
 export function Messages() {
   const [text, setText] = useState("");
   const [username, setUsername] = useState("");
+  const [displayName, setDisplayName] = useState("")
   const [messages, setMessages] = useState<any>([]);
   const [errorMessage, setErrorMessage] = useState("");
   const [viewMode, setViewMode] = useState("Global");
@@ -104,22 +109,41 @@ export function Messages() {
   const [images, setImages] = useState<any>([]);
   const fileInputRef = useRef(null);
 
-  // Retrieve username from localStorage or assign new random username
+  const { wallet } = useUserContext();
+  const { user } = useAuth0();
+
   useEffect(() => {
-    const storedUsername = localStorage.getItem("username");
-    if (storedUsername) {
-      setUsername(storedUsername);
-    } else {
-      const randomAdjective =
-        adjectives[Math.floor(Math.random() * adjectives.length)];
-      const randomNoun = nouns[Math.floor(Math.random() * nouns.length)];
-      const newUsername = `${randomAdjective}${randomNoun}${Math.floor(
-        Math.random() * 100
-      )}`;
-      localStorage.setItem("username", newUsername);
-      setUsername(newUsername);
+    if (wallet) {
+      setUsername(wallet.address)
     }
-  }, []);
+
+    if (user?.nickname) {
+      setDisplayName(user?.nickname);
+    } else if (wallet) {
+      setDisplayName(shortenAddress(wallet.address));
+    }
+  }, [wallet, user])
+
+  useEffect(() => {
+    firebaseClient.getAccounts().then(console.log);
+  }, [])
+
+  // Retrieve username from localStorage or assign new random username
+  // useEffect(() => {
+  //   const storedUsername = localStorage.getItem("username");
+  //   if (storedUsername) {
+  //     setUsername(storedUsername);
+  //   } else {
+  //     const randomAdjective =
+  //       adjectives[Math.floor(Math.random() * adjectives.length)];
+  //     const randomNoun = nouns[Math.floor(Math.random() * nouns.length)];
+  //     const newUsername = `${randomAdjective}${randomNoun}${Math.floor(
+  //       Math.random() * 100
+  //     )}`;
+  //     localStorage.setItem("username", newUsername);
+  //     setUsername(newUsername);
+  //   }
+  // }, []);
 
   // Fetch user's interests once username is set
   useEffect(() => {
@@ -241,11 +265,11 @@ export function Messages() {
 
   const updateGraphWithUserAndHashtags = async (username: any, hashtags: any) => {
     const session = driver.session();
-  
+
     try {
       for (const hashtag of hashtags) {
         const tagName = `#${hashtag}`; // Ensuring hashtag starts with '#'
-  
+
         // Merge user node: creates if not exists, matches otherwise
         const userQuery = `
           MERGE (user:User {username: $username})
@@ -253,7 +277,7 @@ export function Messages() {
           RETURN user
         `;
         await session.run(userQuery, { username });
-  
+
         // Merge hashtag node with type 'hashtag': creates if not exists, matches otherwise
         const hashtagQuery = `
           MERGE (hashtag:Hashtag {name: $tagName, type: 'hashtag'})
@@ -261,7 +285,7 @@ export function Messages() {
           RETURN hashtag
         `;
         await session.run(hashtagQuery, { tagName });
-  
+
         // Create or update bidirectional 'mentions' relationship
         const relationshipQuery = `
           MATCH (user:User {username: $username}), (hashtag:Hashtag {name: $tagName})
@@ -280,7 +304,7 @@ export function Messages() {
     } finally {
       await session.close();
     }
-  };  
+  };
 
   const handleSubmit = async (e?: any) => {
     if (e) e.preventDefault();
@@ -443,7 +467,7 @@ export function Messages() {
       <form onSubmit={handleSubmit} style={{ margin: "20px" }}>
         <div style={{ marginBottom: "20px" }}>
           <Link to={`/${username}`} className="main-username-link">
-            @{username}
+            @{displayName}
           </Link>
         </div>
         <div className="input-with-icon">
@@ -487,17 +511,15 @@ export function Messages() {
         )}
         <div style={{ margin: "10px 0" }}>
           <button
-            className={`button ${
-              viewMode === "Global" ? "button-active" : "button-inactive"
-            }`}
+            className={`button ${viewMode === "Global" ? "button-active" : "button-inactive"
+              }`}
             onClick={handleViewModeChange("Global")}
           >
             Global
           </button>
           <button
-            className={`button ${
-              viewMode === "Home" ? "button-active" : "button-inactive"
-            }`}
+            className={`button ${viewMode === "Home" ? "button-active" : "button-inactive"
+              }`}
             onClick={handleViewModeChange("Home")}
           >
             Home

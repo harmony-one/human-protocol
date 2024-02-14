@@ -1,7 +1,7 @@
 export const shortenAddress = (address: string): string => {
   const start = address.substring(0, 4 + 2); // +2 to include '0x'
   const end = address.substring(address.length - 4);
-  return `${start}...${end}`;
+  return start; // `${start}...${end}`;
 }
 
 export const capitalizeString = (str: string) => {

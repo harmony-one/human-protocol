@@ -1,14 +1,15 @@
-import {useEffect} from 'react'
+import { useEffect } from 'react'
 import { Box } from "grommet";
 import { Button, Typography } from 'antd';
-import {useNavigate} from "react-router-dom";
-import {signInWithGithub, signInWithGoogle, signInWithTwitter, signInWithFacebook } from '../../firebase/authService';
-import {User, UserCredential} from 'firebase/auth';
-import {toast} from 'react-toastify';
-import {useUserContext} from '../../context/UserContext';
-import {getAccount} from '../../api/worker';
+import { useNavigate } from "react-router-dom";
+import { signInWithGithub, signInWithGoogle, signInWithTwitter, signInWithFacebook } from '../../firebase/authService';
+import { User, UserCredential } from 'firebase/auth';
+import { toast } from 'react-toastify';
+import { useUserContext } from '../../context/UserContext';
+import { getAccount } from '../../api/worker';
 import styled from "styled-components";
 import Auth0Login from '../../oauth/Auth0Login';
+import { AppMenu } from '../../components/menu';
 
 const SignInButton = styled(Button)`
     font-size: 16px;
@@ -54,7 +55,7 @@ export const HomePage = () => {
     }
 
     // @ts-ignore
-    if(userCredential && userCredential.user) {
+    if (userCredential && userCredential.user) {
       try {
         await handlePostSignIn(userCredential.user);
       } catch (e) {
@@ -84,25 +85,29 @@ export const HomePage = () => {
     }
   };
 
+  return <Box pad="xlarge">
+    <Button onClick={() => navigate('/messages')}>Go to Messages</Button>
+  </Box>
+
   return (
     <Box align="center" pad={{ top: '15vh' }} gap={'16px'}>
-        <Typography.Title>
-          Auth
-        </Typography.Title>
-        <SignInButton onClick={() => handleSignIn('google')}>
-          Google
-        </SignInButton>
-        <SignInButton onClick={() => handleSignIn('twitter')}>
-          Twitter
-        </SignInButton>
-        <SignInButton onClick={() => handleSignIn('github')}>
-          Github
-        </SignInButton>
-        <SignInButton onClick={() => handleSignIn('facebook')}>
-          Facebook
-        </SignInButton>
-        <Auth0Login />
-        {/* <Input placeholder="Email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
+      <Typography.Title>
+        Auth
+      </Typography.Title>
+      <SignInButton onClick={() => handleSignIn('google')}>
+        Google
+      </SignInButton>
+      <SignInButton onClick={() => handleSignIn('twitter')}>
+        Twitter
+      </SignInButton>
+      <SignInButton onClick={() => handleSignIn('github')}>
+        Github
+      </SignInButton>
+      <SignInButton onClick={() => handleSignIn('facebook')}>
+        Facebook
+      </SignInButton>
+      <Auth0Login />
+      {/* <Input placeholder="Email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
         <Input placeholder="Password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
         <Button onClick={handleEmailSignIn}>Sign in with Email</Button> */}
     </Box>
