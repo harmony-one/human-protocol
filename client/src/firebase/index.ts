@@ -84,10 +84,36 @@ class FirebaseClient {
         return snapshot.data();
     }
 
-    addAccount = async (data: any) => {
-        await setDoc(doc(this.db, "accounts", data.uid), {
-            privateKey: data.privateKey,
-            created: Math.floor(Date.now() / 1000)
+    addAccount = async (data: {
+        address: string,
+        auth: Array<{
+            nickname: string;
+            type: string;
+        }>
+    }) => {
+        await setDoc(doc(this.db, "accounts", data.address), {
+            address: data.address,
+            created: Math.floor(Date.now() / 1000),
+            auth: []
+        })
+    }
+
+    addAuth = async (address: string, auth: { nickname: string, type: string }) => {
+        const snapshot = await getDoc(doc(this.db, "accounts", address));
+        const data = snapshot.data();
+
+        const authData: any[] = data?.auth;
+
+        if (!authData.find(
+            d => d.nickname === auth.nickname && d.type === auth.type
+        )) {
+            authData.push(auth);
+        }
+
+        await setDoc(doc(this.db, "accounts", address), {
+            ...data,
+            auth: authData,
+            updated: Math.floor(Date.now() / 1000),
         })
     }
 
@@ -95,6 +121,8 @@ class FirebaseClient {
         const snapshot = await getDoc(doc(this.db, "accounts", uid));
         return snapshot.data();
     }
+
+    getAccounts = (params?: GetListParams) => this.getList('accounts', params);
 
     getUsers = (params?: GetListParams) => this.getList('users', params);
 

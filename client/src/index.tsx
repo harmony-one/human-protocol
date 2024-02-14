@@ -8,6 +8,7 @@ import { Auth0Provider } from '@auth0/auth0-react';
 
 const domain = process.env.REACT_APP_AUTH0_DOMAIN;
 const clientId = process.env.REACT_APP_AUTH0_CLIENT_ID;
+const redirectUrl = process.env.REACT_APP_AUTH0_REDIRECT;
 
 const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement);
 root.render(
@@ -15,7 +16,7 @@ root.render(
     domain={domain as string}
     clientId={clientId as string}
     authorizationParams={{
-      redirect_uri: "http://localhost:3000/auth"
+      redirect_uri: redirectUrl
     }}
   >
     <App />
