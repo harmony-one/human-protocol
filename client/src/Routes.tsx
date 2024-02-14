@@ -8,6 +8,7 @@ import { CityPage } from "./pages/City";
 import { TagPage } from "./pages/Tag";
 import { UserWorldLocationsPage, WorldLocationsPage } from "./pages/WorldLocations";
 import { FeedPage } from "./pages/feed";
+import { LinkedInCallback } from "./oauth/linkedin/LinkedinCallback";
 
 export const AppRoutes = () => {
   return (
@@ -27,6 +28,7 @@ export const AppRoutes = () => {
           path="/:username/world-locations"
           element={<UserWorldLocationsPage />}
         />
+        <Route path="/auth/linkedin-callback" element={<LinkedInCallback />} />
       </Route>
     </Routes>
   );
