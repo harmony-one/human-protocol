@@ -76,7 +76,6 @@ input,
 .input-with-icon .submit-icon {
   cursor: pointer;
   position: relative;
-  right: 35px;
   color: #007bff;
   font-size: 20px;
   background-color: transparent;

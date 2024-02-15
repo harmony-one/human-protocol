@@ -23,6 +23,8 @@ import { ILocation, IMessage } from "../../firebase/interfaces";
 import { useUserContext } from "../../context/UserContext";
 import { useAuth0 } from '@auth0/auth0-react';
 import { shortenAddress } from '../../utils';
+import {Input, Button} from "antd";
+import {Box, Spinner} from "grommet";
 
 // TEMP: Remove when OAuth login is enabled
 // Replace with user chosen username (still save in localStorage maybe)
@@ -101,6 +103,7 @@ export function Messages() {
   const [text, setText] = useState("");
   const [username, setUsername] = useState("");
   const [displayName, setDisplayName] = useState("")
+  const [isMessagesLoading, setMessagesLoading] = useState(false);
   const [messages, setMessages] = useState<any>([]);
   const [errorMessage, setErrorMessage] = useState("");
   const [viewMode, setViewMode] = useState("Global");
@@ -160,6 +163,9 @@ export function Messages() {
 
   // Show posts based on viewMode
   useEffect(() => {
+    setMessagesLoading(true)
+    setMessages([])
+
     let q;
     if (viewMode === "Global") {
       q = query(collection(firebaseClient.db, "messages"), orderBy("timestamp", "desc"));
@@ -179,6 +185,7 @@ export function Messages() {
         id: doc.id,
       }));
       setMessages(msgs);
+      setMessagesLoading(false)
     });
 
     return () => unsubscribe();
@@ -471,17 +478,23 @@ export function Messages() {
           </Link>
         </div>
         <div className="input-with-icon">
-          <textarea
+          <Input
+            placeholder={'Enter text here'}
             value={text}
+            size={'large'}
             onChange={(e) => setText(e.target.value)}
             onKeyDown={handleKeyDown}
-            placeholder="Enter text here"
-            //@ts-ignore
-            rows="1" // Start with a single line
+            suffix={isSubmitting
+              ? <Box width={'32px'} height={'30px'} justify={'center'}>
+                <Spinner color={'#007bff'} />
+              </Box>
+              : <div onClick={handleSubmit} style={{ width: '32px' }}>
+                <i className="submit-icon">
+                  →
+                </i>
+              </div>
+            }
           />
-          <i onClick={handleSubmit} className="submit-icon">
-            →
-          </i>
           {/* <Link to={`/world-locations`} className="world-icon-link">
             <img
               src={worldIcon}
@@ -509,72 +522,85 @@ export function Messages() {
         {errorMessage && (
           <div style={{ color: "red", marginTop: "10px" }}>{errorMessage}</div>
         )}
-        <div style={{ margin: "10px 0" }}>
-          <button
-            className={`button ${viewMode === "Global" ? "button-active" : "button-inactive"
-              }`}
+        <Box
+          width={'100%'}
+          direction={'row'}
+          margin={{ top: '16px' }}
+          gap={'16px'}
+          justify={'center'}
+        >
+          <Button
+            type={viewMode === 'Global' ? 'primary' : 'default'}
+            size={'large'}
             onClick={handleViewModeChange("Global")}
           >
             Global
-          </button>
-          <button
-            className={`button ${viewMode === "Home" ? "button-active" : "button-inactive"
-              }`}
+          </Button>
+          <Button
+            type={viewMode === 'Home' ? 'primary' : 'default'}
+            size={'large'}
             onClick={handleViewModeChange("Home")}
           >
             Home
-          </button>
-        </div>
+          </Button>
+        </Box>
       </form>
-      {messages.map((message: IMessage) => (
-        <div key={message.id} className="submission">
-          <div className="submission-header">
-            <Link to={`/${message.username}`} className="username-link">
-              {message.username ? `@${message.username}` : "Anonymous"}
-            </Link>
-          </div>
-          <div className="submission-content">
-            <p
-              dangerouslySetInnerHTML={{ __html: parseMessage(message.text) }}
-            ></p>
-            {message.images &&
-              message.images.map((imageUrl) => (
-                <img
-                  key={imageUrl}
-                  src={imageUrl}
-                  alt="Posted"
-                  className="submission-image"
-                />
-              ))}
-            <div className="submission-timestamp">
-              <small>
-                {new Date(message.timestamp).toLocaleDateString("en-US", {
-                  month: "numeric",
-                  day: "numeric",
-                }) +
-                  " " +
-                  new Date(message.timestamp).toLocaleTimeString("en-US", {
-                    hour: "numeric",
-                    minute: "2-digit",
-                    hour12: true,
-                  })}{" "}
-                {/* Added a space inside the curly braces */}
-              </small>
-              <small>
-                {(() => {
-                  const street = extractStreet(message.address);
-                  const zip = extractZip(message.address);
-                  if (street && zip) {
-                    return ` ${street}, ${zip}`; // Ensure there is a space at the start of this string
-                  } else {
-                    return "No Location";
-                  }
-                })()}
-              </small>
+      {isMessagesLoading &&
+          <Box width={'100%'} align={'center'}>
+              <Spinner color={'#007bff'} />
+          </Box>
+      }
+      <Box margin={{ top: '32px' }} align={'center'}>
+        {messages.map((message: IMessage) => (
+          <div key={message.id} className="submission">
+            <div className="submission-header">
+              <Link to={`/${message.username}`} className="username-link">
+                {message.username ? `@${message.username}` : "Anonymous"}
+              </Link>
+            </div>
+            <div className="submission-content">
+              <p
+                dangerouslySetInnerHTML={{ __html: parseMessage(message.text) }}
+              ></p>
+              {message.images &&
+                message.images.map((imageUrl) => (
+                  <img
+                    key={imageUrl}
+                    src={imageUrl}
+                    alt="Posted"
+                    className="submission-image"
+                  />
+                ))}
+              <div className="submission-timestamp">
+                <small>
+                  {new Date(message.timestamp).toLocaleDateString("en-US", {
+                      month: "numeric",
+                      day: "numeric",
+                    }) +
+                    " " +
+                    new Date(message.timestamp).toLocaleTimeString("en-US", {
+                      hour: "numeric",
+                      minute: "2-digit",
+                      hour12: true,
+                    })}{" "}
+                  {/* Added a space inside the curly braces */}
+                </small>
+                <small>
+                  {(() => {
+                    const street = extractStreet(message.address);
+                    const zip = extractZip(message.address);
+                    if (street && zip) {
+                      return ` ${street}, ${zip}`; // Ensure there is a space at the start of this string
+                    } else {
+                      return "No Location";
+                    }
+                  })()}
+                </small>
+              </div>
             </div>
           </div>
-        </div>
-      ))}
+        ))}
+      </Box>
     </div>
   );
 }
