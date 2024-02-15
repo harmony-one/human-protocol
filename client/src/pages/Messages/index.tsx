@@ -25,6 +25,7 @@ import { useAuth0 } from '@auth0/auth0-react';
 import { shortenAddress } from '../../utils';
 import {Input, Button} from "antd";
 import {Box, Spinner} from "grommet";
+import {UserMessage} from "./Message";
 
 // TEMP: Remove when OAuth login is enabled
 // Replace with user chosen username (still save in localStorage maybe)
@@ -106,7 +107,7 @@ export function Messages() {
   const [isMessagesLoading, setMessagesLoading] = useState(false);
   const [messages, setMessages] = useState<any>([]);
   const [errorMessage, setErrorMessage] = useState("");
-  const [viewMode, setViewMode] = useState("Global");
+  const [viewMode, setViewMode] = useState<'Global' | 'Home'>("Global");
   const [userTags, setUserTags] = useState<any>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [images, setImages] = useState<any>([]);
@@ -552,53 +553,7 @@ export function Messages() {
       }
       <Box margin={{ top: '32px' }} align={'center'}>
         {messages.map((message: IMessage) => (
-          <div key={message.id} className="submission">
-            <div className="submission-header">
-              <Link to={`/${message.username}`} className="username-link">
-                {message.username ? `@${message.username}` : "Anonymous"}
-              </Link>
-            </div>
-            <div className="submission-content">
-              <p
-                dangerouslySetInnerHTML={{ __html: parseMessage(message.text) }}
-              ></p>
-              {message.images &&
-                message.images.map((imageUrl) => (
-                  <img
-                    key={imageUrl}
-                    src={imageUrl}
-                    alt="Posted"
-                    className="submission-image"
-                  />
-                ))}
-              <div className="submission-timestamp">
-                <small>
-                  {new Date(message.timestamp).toLocaleDateString("en-US", {
-                      month: "numeric",
-                      day: "numeric",
-                    }) +
-                    " " +
-                    new Date(message.timestamp).toLocaleTimeString("en-US", {
-                      hour: "numeric",
-                      minute: "2-digit",
-                      hour12: true,
-                    })}{" "}
-                  {/* Added a space inside the curly braces */}
-                </small>
-                <small>
-                  {(() => {
-                    const street = extractStreet(message.address);
-                    const zip = extractZip(message.address);
-                    if (street && zip) {
-                      return ` ${street}, ${zip}`; // Ensure there is a space at the start of this string
-                    } else {
-                      return "No Location";
-                    }
-                  })()}
-                </small>
-              </div>
-            </div>
-          </div>
+          <UserMessage key={message.id} message={message} />
         ))}
       </Box>
     </div>
