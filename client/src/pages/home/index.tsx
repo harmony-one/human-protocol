@@ -8,12 +8,10 @@ import {toast} from 'react-toastify';
 import {useUserContext} from '../../context/UserContext';
 import {getAccount} from '../../api/worker';
 import styled from "styled-components";
-import LinkedinAuth from '../../oauth/linkedin/LinkedinAuth';
-import SignInButton from '../../components/buttons/SignInButton';
-import OpenIdLogin from '../../oauth/auth0/OpenIdLogin';
+import UsernamePrompt from '../../components/modals/UsernamePrompt';
 
 export const HomePage = () => {
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
 
   // TODO: unset user upon logout
   // const { wallet } = useUserContext();
@@ -25,80 +23,32 @@ export const HomePage = () => {
   //   }
   // }, [wallet, navigate]);
 
-  const handleFirebaseSignIn = async (provider: string): Promise<void> => {
-    let userCredential: UserCredential;
-
-    try {
-      // TODO: ensure the error "auth/popup-closed-by-user" is triggered immediately
-      switch (provider) {
-        case 'Google':
-          userCredential = await signInWithGoogle();
-          break;
-        case 'Twitter':
-          userCredential = await signInWithTwitter();
-          break;
-        case 'Github':
-          userCredential = await signInWithGithub();
-          break;
-        case 'Facebook':
-          userCredential = await signInWithFacebook();
-          break;
-        default:
-          throw new Error('Unsupported provider');
-      }
-    } catch (error) {
-      console.error(error);
-    }
-
-    // @ts-ignore
-    if(userCredential && userCredential.user) {
-      try {
-        await handlePostSignIn(userCredential.user);
-      } catch (e) {
-        console.error(e);
-      }
-    }
-  };
-
-  // const handleEmailSignIn = async (): Promise<void> => {
-  //   try {
-  //     const userCredential = await signInWithEmail(email, password);
-  //     await handlePostSignIn(userCredential.user);
-  //     navigate('/feed');
-  //   } catch (error) {
-  //     console.error(error);
-  //     toast.error('Failed to sign in', {
-  //       autoClose: 10000
-  //     })
+  //   // @ts-ignore
+  //   if(userCredential && userCredential.user) {
+  //     try {
+  //       await handlePostSignIn(userCredential.user);
+  //     } catch (e) {
+  //       console.error(e);
+  //     }
   //   }
   // };
 
-  const handlePostSignIn = async (user: User) => {
-    if (user.metadata.creationTime === user.metadata.lastSignInTime) { // new user
-      navigate('/welcome');
-    } else { // existing user
-      navigate('/messages');
-    }
-  };
+  // const handlePostSignIn = async (user: User) => {
+  //   if (user.metadata.creationTime === user.metadata.lastSignInTime) { // new user
+  //     navigate('/welcome');
+  //   } else { // existing user
+  //     navigate('/messages');
+  //   }
+  // };
 
   return (
     <Box align="center" pad={{ top: '15vh' }} gap={'16px'}>
-        <Typography.Title>
-          Auth
-        </Typography.Title>
-        {/* <SignInButton onClick={handleFirebaseSignIn} providerName="Google" displayName="Google" />
-        <SignInButton onClick={handleFirebaseSignIn} providerName="Twitter" displayName="Twitter" />
-        <SignInButton onClick={handleFirebaseSignIn} providerName="Github" displayName="Github" />
-        <SignInButton onClick={handleFirebaseSignIn} providerName="Facebook" displayName="Facebook"/> */}
-        <OpenIdLogin providerName="google-oauth2" displayName="Google"/>
-        <OpenIdLogin providerName="twitter" displayName="Twitter"/>
-        <OpenIdLogin providerName="github" displayName="Github"/>
-        <OpenIdLogin providerName="linkedin" displayName="LinkedIn"/>
-        <OpenIdLogin providerName="discord" displayName="Discord"/>
-        <LinkedinAuth />
-        {/* <Input placeholder="Email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
-        <Input placeholder="Password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
-        <Button onClick={handleEmailSignIn}>Sign in with Email</Button> */}
+      <UsernamePrompt providerName="google-oauth2" displayName="Google" providerShorthand="g" authType="openid" />
+      <UsernamePrompt providerName="twitter" displayName="Twitter" providerShorthand="x" authType="openid" />
+      <UsernamePrompt providerName="github" displayName="Github" providerShorthand="git" authType="openid" />
+      <UsernamePrompt providerName="linkedin" displayName="LinkedIn" providerShorthand="l" authType="openid" />
+      <UsernamePrompt providerName="discord" displayName="Discord" providerShorthand="d" authType="openid" />
+      <UsernamePrompt providerName="linkedIn" displayName="LinkedIn (without Auth0)" providerShorthand="l" authType="linkedin" />
     </Box>
   );
 }

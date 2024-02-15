@@ -21,6 +21,7 @@ export const LinkedInCallback = () => {
         if (!response.ok) {
           throw new Error('Network response was not ok');
         }
+        navigate('/auth');
         return response.json();
       })
       
@@ -30,6 +31,7 @@ export const LinkedInCallback = () => {
       })
       .catch(error => {
         console.error('Error:', error);
+        navigate('/auth');
       });
     }
     
