@@ -1,5 +1,7 @@
 
 import placeholder from './assets/logos/placeholder.png';
+import oneColor from './assets/logos/one-color.svg'
+import oneOutline from './assets/logos/one-grey.svg'
 import {UserTopicType, type UserTopic} from "./types";
 
 export const baseTopicList = [
@@ -60,8 +62,8 @@ export const getTopicLits = async (): Promise<UserTopic[]> => {
       console.log(e)
       return {
           name: logo.name,
-          logoOutline: placeholder,
-          logo: placeholder,
+          logoOutline: oneOutline, // placeholder,
+          logo: oneColor, // placeholder,
           type: logo.type as UserTopicType,
           group: logo.group
     

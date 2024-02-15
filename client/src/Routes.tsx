@@ -18,7 +18,8 @@ export const AppRoutes = () => {
         <Route path={'/feed'} element={<FeedPage />} />
         <Route path={'/auth'} element={<HomePage />} />
 
-        <Route path="/messages" element={<Messages />} />
+        <Route path="/messages" element={<Messages />} /> 
+        {/* element={<WelcomePage />} />*/}
         <Route path="/:username" element={<UserPage />} />
         <Route path="/city/:city" element={<CityPage />} />
         <Route path="/tag/:tag" element={<TagPage />} />
