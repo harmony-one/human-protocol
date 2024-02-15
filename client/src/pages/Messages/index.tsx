@@ -20,6 +20,13 @@ import { driver } from "../../neo4-driver";
 import { firebaseClient } from "../../firebase";
 import { ILocation, IMessage } from "../../firebase/interfaces";
 
+import { useUserContext } from "../../context/UserContext";
+import { useAuth0 } from '@auth0/auth0-react';
+import { shortenAddress } from '../../utils';
+import {Input, Button} from "antd";
+import {Box, Spinner} from "grommet";
+import {UserMessage} from "./Message";
+
 // TEMP: Remove when OAuth login is enabled
 // Replace with user chosen username (still save in localStorage maybe)
 const adjectives = [
@@ -96,30 +103,51 @@ const hiddenFileInputStyle = {
 export function Messages() {
   const [text, setText] = useState("");
   const [username, setUsername] = useState("");
+  const [displayName, setDisplayName] = useState("")
+  const [isMessagesLoading, setMessagesLoading] = useState(false);
   const [messages, setMessages] = useState<any>([]);
   const [errorMessage, setErrorMessage] = useState("");
-  const [viewMode, setViewMode] = useState("Global");
+  const [viewMode, setViewMode] = useState<'Global' | 'Home'>("Global");
   const [userTags, setUserTags] = useState<any>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [images, setImages] = useState<any>([]);
   const fileInputRef = useRef(null);
 
-  // Retrieve username from localStorage or assign new random username
+  const { wallet } = useUserContext();
+  const { user } = useAuth0();
+
   useEffect(() => {
-    const storedUsername = localStorage.getItem("username");
-    if (storedUsername) {
-      setUsername(storedUsername);
-    } else {
-      const randomAdjective =
-        adjectives[Math.floor(Math.random() * adjectives.length)];
-      const randomNoun = nouns[Math.floor(Math.random() * nouns.length)];
-      const newUsername = `${randomAdjective}${randomNoun}${Math.floor(
-        Math.random() * 100
-      )}`;
-      localStorage.setItem("username", newUsername);
-      setUsername(newUsername);
+    if (wallet) {
+      setUsername(wallet.address)
     }
-  }, []);
+
+    if (user?.nickname) {
+      setDisplayName(user?.nickname);
+    } else if (wallet) {
+      setDisplayName(shortenAddress(wallet.address));
+    }
+  }, [wallet, user])
+
+  useEffect(() => {
+    firebaseClient.getAccounts().then(console.log);
+  }, [])
+
+  // Retrieve username from localStorage or assign new random username
+  // useEffect(() => {
+  //   const storedUsername = localStorage.getItem("username");
+  //   if (storedUsername) {
+  //     setUsername(storedUsername);
+  //   } else {
+  //     const randomAdjective =
+  //       adjectives[Math.floor(Math.random() * adjectives.length)];
+  //     const randomNoun = nouns[Math.floor(Math.random() * nouns.length)];
+  //     const newUsername = `${randomAdjective}${randomNoun}${Math.floor(
+  //       Math.random() * 100
+  //     )}`;
+  //     localStorage.setItem("username", newUsername);
+  //     setUsername(newUsername);
+  //   }
+  // }, []);
 
   // Fetch user's interests once username is set
   useEffect(() => {
@@ -136,6 +164,9 @@ export function Messages() {
 
   // Show posts based on viewMode
   useEffect(() => {
+    setMessagesLoading(true)
+    setMessages([])
+
     let q;
     if (viewMode === "Global") {
       q = query(collection(firebaseClient.db, "messages"), orderBy("timestamp", "desc"));
@@ -155,6 +186,7 @@ export function Messages() {
         id: doc.id,
       }));
       setMessages(msgs);
+      setMessagesLoading(false)
     });
 
     return () => unsubscribe();
@@ -241,11 +273,11 @@ export function Messages() {
 
   const updateGraphWithUserAndHashtags = async (username: any, hashtags: any) => {
     const session = driver.session();
-  
+
     try {
       for (const hashtag of hashtags) {
         const tagName = `#${hashtag}`; // Ensuring hashtag starts with '#'
-  
+
         // Merge user node: creates if not exists, matches otherwise
         const userQuery = `
           MERGE (user:User {username: $username})
@@ -253,7 +285,7 @@ export function Messages() {
           RETURN user
         `;
         await session.run(userQuery, { username });
-  
+
         // Merge hashtag node with type 'hashtag': creates if not exists, matches otherwise
         const hashtagQuery = `
           MERGE (hashtag:Hashtag {name: $tagName, type: 'hashtag'})
@@ -261,7 +293,7 @@ export function Messages() {
           RETURN hashtag
         `;
         await session.run(hashtagQuery, { tagName });
-  
+
         // Create or update bidirectional 'mentions' relationship
         const relationshipQuery = `
           MATCH (user:User {username: $username}), (hashtag:Hashtag {name: $tagName})
@@ -280,7 +312,7 @@ export function Messages() {
     } finally {
       await session.close();
     }
-  };  
+  };
 
   const handleSubmit = async (e?: any) => {
     if (e) e.preventDefault();
@@ -443,21 +475,27 @@ export function Messages() {
       <form onSubmit={handleSubmit} style={{ margin: "20px" }}>
         <div style={{ marginBottom: "20px" }}>
           <Link to={`/${username}`} className="main-username-link">
-            @{username}
+            @{displayName}
           </Link>
         </div>
         <div className="input-with-icon">
-          <textarea
+          <Input
+            placeholder={'Enter text here'}
             value={text}
+            size={'large'}
             onChange={(e) => setText(e.target.value)}
             onKeyDown={handleKeyDown}
-            placeholder="Enter text here"
-            //@ts-ignore
-            rows="1" // Start with a single line
+            suffix={isSubmitting
+              ? <Box width={'32px'} height={'30px'} justify={'center'}>
+                <Spinner color={'#007bff'} />
+              </Box>
+              : <div onClick={handleSubmit} style={{ width: '32px' }}>
+                <i className="submit-icon">
+                  →
+                </i>
+              </div>
+            }
           />
-          <i onClick={handleSubmit} className="submit-icon">
-            →
-          </i>
           {/* <Link to={`/world-locations`} className="world-icon-link">
             <img
               src={worldIcon}
@@ -485,74 +523,39 @@ export function Messages() {
         {errorMessage && (
           <div style={{ color: "red", marginTop: "10px" }}>{errorMessage}</div>
         )}
-        <div style={{ margin: "10px 0" }}>
-          <button
-            className={`button ${
-              viewMode === "Global" ? "button-active" : "button-inactive"
-            }`}
+        <Box
+          width={'100%'}
+          direction={'row'}
+          margin={{ top: '16px' }}
+          gap={'16px'}
+          justify={'center'}
+        >
+          <Button
+            type={viewMode === 'Global' ? 'primary' : 'default'}
+            size={'large'}
             onClick={handleViewModeChange("Global")}
           >
             Global
-          </button>
-          <button
-            className={`button ${
-              viewMode === "Home" ? "button-active" : "button-inactive"
-            }`}
+          </Button>
+          <Button
+            type={viewMode === 'Home' ? 'primary' : 'default'}
+            size={'large'}
             onClick={handleViewModeChange("Home")}
           >
             Home
-          </button>
-        </div>
+          </Button>
+        </Box>
       </form>
-      {messages.map((message: IMessage) => (
-        <div key={message.id} className="submission">
-          <div className="submission-header">
-            <Link to={`/${message.username}`} className="username-link">
-              {message.username ? `@${message.username}` : "Anonymous"}
-            </Link>
-          </div>
-          <div className="submission-content">
-            <p
-              dangerouslySetInnerHTML={{ __html: parseMessage(message.text) }}
-            ></p>
-            {message.images &&
-              message.images.map((imageUrl) => (
-                <img
-                  key={imageUrl}
-                  src={imageUrl}
-                  alt="Posted"
-                  className="submission-image"
-                />
-              ))}
-            <div className="submission-timestamp">
-              <small>
-                {new Date(message.timestamp).toLocaleDateString("en-US", {
-                  month: "numeric",
-                  day: "numeric",
-                }) +
-                  " " +
-                  new Date(message.timestamp).toLocaleTimeString("en-US", {
-                    hour: "numeric",
-                    minute: "2-digit",
-                    hour12: true,
-                  })}{" "}
-                {/* Added a space inside the curly braces */}
-              </small>
-              <small>
-                {(() => {
-                  const street = extractStreet(message.address);
-                  const zip = extractZip(message.address);
-                  if (street && zip) {
-                    return ` ${street}, ${zip}`; // Ensure there is a space at the start of this string
-                  } else {
-                    return "No Location";
-                  }
-                })()}
-              </small>
-            </div>
-          </div>
-        </div>
-      ))}
+      {isMessagesLoading &&
+          <Box width={'100%'} align={'center'}>
+              <Spinner color={'#007bff'} />
+          </Box>
+      }
+      <Box margin={{ top: '32px' }} align={'center'}>
+        {messages.map((message: IMessage) => (
+          <UserMessage key={message.id} message={message} />
+        ))}
+      </Box>
     </div>
   );
 }

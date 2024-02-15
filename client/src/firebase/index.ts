@@ -3,19 +3,21 @@ import { getFirestore, collection, getDocs, Firestore, setDoc, doc, query, where
 import { getAnalytics } from "firebase/analytics";
 import { getAuth, Auth } from "firebase/auth";
 import { FirebaseStorage, getStorage } from 'firebase/storage';
+import config from '../config';
+
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
-    apiKey: process.env.REACT_APP_API_KEY,
-    authDomain: process.env.REACT_APP_AUTH_DOMAIN,
-    projectId: process.env.REACT_APP_PROJECT_ID,
-    storageBucket: process.env.REACT_APP_STORAGE_BUCKET,
-    messagingSenderId: process.env.REACT_APP_MESSAGING_SENDER_ID,
-    appId: process.env.REACT_APP_APP_ID,
-    measurementId: process.env.REACT_APP_MEASUREMENT_ID,
+    apiKey: config.firebase.apiKey,
+    authDomain: config.firebase.authDomain,
+    projectId: config.firebase.projectId,
+    storageBucket: config.firebase.storageBucket,
+    messagingSenderId: config.firebase.messagingSenderId,
+    appId: config.firebase.appId,
+    measurementId: config.firebase.measurementId,
 };
 
 interface GetListParams {
@@ -84,10 +86,36 @@ class FirebaseClient {
         return snapshot.data();
     }
 
-    addAccount = async (data: any) => {
-        await setDoc(doc(this.db, "accounts", data.uid), {
-            privateKey: data.privateKey,
-            created: Math.floor(Date.now() / 1000)
+    addAccount = async (data: {
+        address: string,
+        auth: Array<{
+            nickname: string;
+            type: string;
+        }>
+    }) => {
+        await setDoc(doc(this.db, "accounts", data.address), {
+            address: data.address,
+            created: Math.floor(Date.now() / 1000),
+            auth: []
+        })
+    }
+
+    addAuth = async (address: string, auth: { nickname: string, type: string }) => {
+        const snapshot = await getDoc(doc(this.db, "accounts", address));
+        const data = snapshot.data();
+
+        const authData: any[] = data?.auth;
+
+        if (!authData.find(
+            d => d.nickname === auth.nickname && d.type === auth.type
+        )) {
+            authData.push(auth);
+        }
+
+        await setDoc(doc(this.db, "accounts", address), {
+            ...data,
+            auth: authData,
+            updated: Math.floor(Date.now() / 1000),
         })
     }
 
@@ -95,6 +123,8 @@ class FirebaseClient {
         const snapshot = await getDoc(doc(this.db, "accounts", uid));
         return snapshot.data();
     }
+
+    getAccounts = (params?: GetListParams) => this.getList('accounts', params);
 
     getUsers = (params?: GetListParams) => this.getList('users', params);
 

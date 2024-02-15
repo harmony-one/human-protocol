@@ -1,9 +1,10 @@
 .App {
-  display: flex;
-  flex-direction: column;
+  /* display: flex;
+  flex-direction: column; */
   align-items: center;
   justify-content: flex-start;
-  min-height: 100vh;
+  /* min-height: 100vh; */
+  height: -webkit-fill-available; /* fullscreen */
   font-family: Arial, sans-serif;
   padding: 20px;
 }
@@ -75,7 +76,6 @@ input,
 .input-with-icon .submit-icon {
   cursor: pointer;
   position: relative;
-  right: 35px;
   color: #007bff;
   font-size: 20px;
   background-color: transparent;
@@ -165,13 +165,14 @@ a[href^="/tag/"] {
   }
 
   .App {
-    display: flex;
-    flex-direction: column;
+    /* display: flex;
+    flex-direction: column; */
     align-items: center;
     justify-content: flex-start;
     padding: 10px;
     width: 100%;
     box-sizing: border-box;
+    height: -webkit-fill-available;
   }
 
   input,

@@ -38,9 +38,9 @@ export const getUserTopics = async (address: string): Promise<string[]> => {
   // return data
 }
 
-export const postAccount = async (uid: string, publicKey: string, privateKey: string) => {
+export const postAccount = async (uid: string, address: string, privateKey: string) => {
   return await firebaseClient.addAccount({
-    uid: uid, publicKey: publicKey, privateKey: privateKey
+    address: address, auth: []
   });
 }
 

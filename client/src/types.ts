@@ -11,8 +11,12 @@ export interface UserProfile {
   providerId: string | null;
 }
 
+export type UserTopicType = 'blockchain' | 'event' | 'nft' | 'dao' | 'protocol' | 'app'
+
 export interface UserTopic {
   name: string
-  alias: string
+  type: UserTopicType
+  logoOutline: any
   logo: any
+  group: number
 }

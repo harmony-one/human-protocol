@@ -1,16 +1,17 @@
-import {useEffect} from 'react'
+import { useEffect } from 'react'
 import { Box } from "grommet";
 import { Button, Typography } from 'antd';
-import {useNavigate} from "react-router-dom";
-import {signInWithGithub, signInWithGoogle, signInWithTwitter, signInWithFacebook } from '../../firebase/authService';
-import {User, UserCredential} from 'firebase/auth';
-import {toast} from 'react-toastify';
-import {useUserContext} from '../../context/UserContext';
-import {getAccount} from '../../api/worker';
+import { useNavigate } from "react-router-dom";
+import { signInWithGithub, signInWithGoogle, signInWithTwitter, signInWithFacebook } from '../../firebase/authService';
+import { User, UserCredential } from 'firebase/auth';
+import { toast } from 'react-toastify';
+import { useUserContext } from '../../context/UserContext';
+import { getAccount } from '../../api/worker';
 import styled from "styled-components";
 import LinkedinAuth from '../../oauth/linkedin/LinkedinAuth';
 import SignInButton from '../../components/buttons/SignInButton';
 import OpenIdLogin from '../../oauth/auth0/OpenIdLogin';
+import { AppMenu } from '../../components/menu';
 
 export const HomePage = () => {
   const navigate = useNavigate();
@@ -51,7 +52,7 @@ export const HomePage = () => {
     }
 
     // @ts-ignore
-    if(userCredential && userCredential.user) {
+    if (userCredential && userCredential.user) {
       try {
         await handlePostSignIn(userCredential.user);
       } catch (e) {
@@ -80,6 +81,10 @@ export const HomePage = () => {
       navigate('/messages');
     }
   };
+
+  return <Box pad="xlarge">
+    <Button onClick={() => navigate('/messages')}>Go to Messages</Button>
+  </Box>
 
   return (
     <Box align="center" pad={{ top: '15vh' }} gap={'16px'}>
