@@ -16,5 +16,7 @@ export type UserTopicType = 'blockchain' | 'event' | 'nft' | 'dao' | 'protocol' 
 export interface UserTopic {
   name: string
   type: UserTopicType
+  logoOutline: any
   logo: any
+  group: number
 }

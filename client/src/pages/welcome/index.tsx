@@ -1,71 +1,87 @@
-import React, {useState, useEffect} from 'react'
+import React, { useState, useEffect } from "react";
 import { Box } from "grommet";
-import {postUserTopics} from "../../api/worker";
-import {toast} from "react-toastify";
-import {TopicsList} from "../../constants";
+import { postUserTopics } from "../../api/worker";
+import { toast } from "react-toastify";
+import { TopicsList } from "../../constants";
 import styled from "styled-components";
-import {useNavigate} from "react-router-dom";
-import { useUserContext } from '../../context/UserContext';
-import {UserTopic} from "../../types";
-import {message, Typography, Spin} from 'antd';
+import { useNavigate } from "react-router-dom";
+import { useUserContext } from "../../context/UserContext";
+import { UserTopic } from "../../types";
+import { message, Typography, Spin } from "antd";
 
+const WelcomeContainer = styled(Box)`
+  margin: 0 auto !important;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  gap: 2em;
+  width: 100%;
+  height: 95vh;
+`;
 const TopicsContainer = styled(Box)`
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(25%, 1fr));
-    //gap: 16px;
-    //padding: 16px;
+  display: grid;
 
-    border: 1px solid black;
+  grid-template-columns: repeat(auto-fit, minmax(25%, 1fr));
+  //gap: 16px;
+  //padding: 16px;
 
-    // Cells on the right side
-    > div:nth-child(4n) {
-        border-right: 0;
-    }
+  /* border: 1px solid black; */
 
-    // Cells on the bottom
-    > div:nth-child(n + 13) {
-        border-bottom: 0;
-    }
-`
+  // Cells on the right side
+  > div:nth-child(4n) {
+    border-right: 0;
+  }
+
+  // Cells on the bottom
+  > div:nth-child(n + 13) {
+    border-bottom: 0;
+  }
+
+  @media only screen and (min-width: 768px) {
+    max-width: 700px;
+  }
+`;
 
 const TopicItemContainer = styled(Box)<{ isSelected?: boolean }>`
-    position: relative;
-    aspect-ratio: 1 / 1;
-    width: 100%;
-    max-height: 100%;
-    user-select: none;
-    //box-shadow: rgba(0, 0, 0, 0.08) 0 4px 16px;
-    box-shadow: none;
-    border: 1px solid black;
-    border-top: 0;
-    border-left: 0;
-    //border-radius: 4px;
-    overflow: hidden;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    transition: transform 250ms;
+  position: relative;
+  aspect-ratio: 1 / 1;
+  width: 100%;
+  max-height: 100%;
+  user-select: none;
+  //box-shadow: rgba(0, 0, 0, 0.08) 0 4px 16px;
+  box-shadow: none;
+  border: 0px; //1px solid black;
+  border-top: 0;
+  border-left: 0;
+  //border-radius: 4px;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: transform 250ms;
 
-    // &:hover {
-    //     transform: scale(1.04);
-    // }
+  // &:hover {
+  //     transform: scale(1.04);
+  // }
 
-    ${props => (props.isSelected) && `
+  /* ${(props) =>
+    props.isSelected &&
+    `
       box-shadow: 0px 0px 0px 4px #69fabd inset;
-    `}
-`
-
+    `} */
+`;
 
 const TopicItemImage = styled.img`
-  max-width: 40%;
-  max-height: 40%;
+  max-width: 60%;
+  max-height: 60%;
 `;
 
 const TopicItemAlias = styled(Box)`
-    position: absolute;
-    bottom: 5%;
-    right: 5%;
-`
+  position: absolute;
+  bottom: 5%;
+  text-align: center;
+  /* right: 5%; */
+`;
 
 interface TopicItemProps {
   topic: UserTopic;
@@ -73,18 +89,71 @@ interface TopicItemProps {
   onClick: () => void;
 }
 
-const TopicItem = (props: TopicItemProps) => {
-  const { topic, isSelected, onClick } = props
+// const TopicItem = (props: TopicItemProps) => {
+//   const { topic, isSelected, onClick } = props;
 
-  const prefix = topic.type === 'blockchain' ? '$' : '#'
+//   const prefix = "#"; // topic.type === 'blockchain' ? '$' : '#'
+
+//   return (
+//     <TopicItemContainer isSelected={isSelected} onClick={onClick}>
+//       {isSelected ? (<TopicItemImage
+//         src={topic.logo}
+//         alt={`${topic.name} logo`}
+//       />) : (
+//       <TopicItemImage
+//         src={topic.logoOutline}
+//         alt={`${topic.name} logo`}
+//       />)}
+//       <TopicItemAlias>
+//         {isSelected && <Typography.Text
+//           style={{ fontSize: "min(2vw, 1rem)", fontWeight: 400 }}
+//         >
+//           {prefix}
+//           {topic.name}
+//         </Typography.Text> }
+//       </TopicItemAlias>
+//     </TopicItemContainer>
+//   );
+// };
+
+const TopicItem = (props: TopicItemProps) => {
+  const { topic, isSelected, onClick } = props;
+  const [image, setImage] = useState(topic.logoOutline)
+  
+  useEffect(() => {
+    if (isSelected) {
+      setImage(topic.logo);
+    } else {
+      setImage(topic.logoOutline)
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isSelected])
+
+  const prefix = "#"; // topic.type === 'blockchain' ? '$' : '#'
 
   return (
     <TopicItemContainer isSelected={isSelected} onClick={onClick}>
-      <TopicItemImage src={topic.logo} alt={`${topic.name} logo`} />
+       {/* {image && <TopicItemImage
+            src={image}
+            alt={`${topic.name} logo`}
+          />} */}
+      {isSelected ? (
+          <TopicItemImage
+            src={topic.logo}
+            alt={`${topic.name} logo`}
+          />
+        ) : (
+          <TopicItemImage src={topic.logoOutline} alt={`${topic.name} logo`} />
+        )}
       <TopicItemAlias>
-        <Typography.Text style={{ fontSize: 'min(2vw, 18px)', fontWeight: 400 }}>
-          {prefix}{topic.name}
-        </Typography.Text>
+        {isSelected && (
+          <Typography.Text
+            style={{ fontSize: "min(2vw, 1rem)", fontWeight: 400 }}
+          >
+            {prefix}
+            {topic.name}
+          </Typography.Text>
+        )}
       </TopicItemAlias>
     </TopicItemContainer>
   );
@@ -97,44 +166,47 @@ export const WelcomePage: React.FC = () => {
   const navigate = useNavigate();
   const [messageApi, contextHolder] = message.useMessage();
   const [selectedTopics, setSelectedTopics] = useState<string[]>([]);
-  const [isTopicsUpdating, setTopicsUpdating] = useState(false)
+  const [isTopicsUpdating, setTopicsUpdating] = useState(false);
 
   useEffect(() => {
     if (selectedTopics.length === 4 && wallet?.address) {
-      setTopicsUpdating(true)
+      setTopicsUpdating(true);
       postUserTopics(wallet.address, selectedTopics)
         .then(() => {
           // toast.success(`Added ${selectedTopics.length} topics!`, { autoClose: 10000 });
-          navigate('/messages');
+          navigate("/messages");
         })
-        .catch(e => {
+        .catch((e) => {
           toast.error(`Cannot add topics: ${e.message}`, { autoClose: 10000 });
-        }).finally(() => {
-        setTopicsUpdating(false)
-      });
+        })
+        .finally(() => {
+          setTopicsUpdating(false);
+        });
     }
   }, [selectedTopics, wallet?.address, navigate]);
 
   const topicSelectedNotification = (name: string) => {
     messageApi.open({
-      key: 'topic',
-      content: <Box width={'200px'}>
-        <Typography.Text style={{ fontSize: '18px' }}>{name}</Typography.Text>
-      </Box>,
+      key: "topic",
+      content: (
+        <Box width={"200px"}>
+          <Typography.Text style={{ fontSize: "18px" }}>{name}</Typography.Text>
+        </Box>
+      ),
       style: {
-        marginTop: 'calc(25% - 20px)',
+        marginTop: "calc(25% - 20px)",
         // opacity: 0.7
-      }
+      },
     });
-  }
+  };
 
   const handleTopicClick = (topic: UserTopic) => {
-    const { name } = topic
+    const { name } = topic;
 
-    setSelectedTopics(prevSelectedTopics => {
+    setSelectedTopics((prevSelectedTopics) => {
       const isAlreadySelected = prevSelectedTopics.includes(name);
       if (isAlreadySelected) {
-        return prevSelectedTopics.filter(t => t !== name);
+        return prevSelectedTopics.filter((t) => t !== name);
       }
       return [...prevSelectedTopics, name];
     });
@@ -146,12 +218,12 @@ export const WelcomePage: React.FC = () => {
     // }
   };
 
-  return (
-    <Box pad="medium">
-      {contextHolder}
-      <Spin spinning={isTopicsUpdating} size={'large'}>
-        <TopicsContainer>
-          {TopicsList.map(topic => (
+  const renderTopicsContainer = (group: number) => (
+    <TopicsContainer>
+      {TopicsList &&
+        TopicsList
+          .filter((topic) => topic.group === group)
+          .map((topic) => (
             <TopicItem
               key={topic.name}
               topic={topic}
@@ -159,7 +231,18 @@ export const WelcomePage: React.FC = () => {
               onClick={() => handleTopicClick(topic)}
             />
           ))}
-        </TopicsContainer>
+    </TopicsContainer>
+  );
+
+  return (
+    <Box>
+      {contextHolder}
+      <Spin spinning={isTopicsUpdating} size={"large"}>
+        <WelcomeContainer>
+          {[1, 2, 3].map((group) => (
+            <>{renderTopicsContainer(group)}</>
+          ))}
+        </WelcomeContainer>
       </Spin>
     </Box>
   );
