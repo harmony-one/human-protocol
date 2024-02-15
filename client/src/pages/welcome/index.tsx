@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Box } from "grommet";
 import { postUserTopics } from "../../api/worker";
 import { toast } from "react-toastify";
-import { TopicsList } from "../../constants";
+import { getTopicLits } from "../../constants";
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
 import { useUserContext } from "../../context/UserContext";
@@ -72,8 +72,8 @@ const TopicItemContainer = styled(Box)<{ isSelected?: boolean }>`
 `;
 
 const TopicItemImage = styled.img`
-  max-width: 60%;
-  max-height: 60%;
+  max-width: 50%;
+  max-height: 50%;
 `;
 
 const TopicItemAlias = styled(Box)`
@@ -89,66 +89,28 @@ interface TopicItemProps {
   onClick: () => void;
 }
 
-// const TopicItem = (props: TopicItemProps) => {
-//   const { topic, isSelected, onClick } = props;
-
-//   const prefix = "#"; // topic.type === 'blockchain' ? '$' : '#'
-
-//   return (
-//     <TopicItemContainer isSelected={isSelected} onClick={onClick}>
-//       {isSelected ? (<TopicItemImage
-//         src={topic.logo}
-//         alt={`${topic.name} logo`}
-//       />) : (
-//       <TopicItemImage
-//         src={topic.logoOutline}
-//         alt={`${topic.name} logo`}
-//       />)}
-//       <TopicItemAlias>
-//         {isSelected && <Typography.Text
-//           style={{ fontSize: "min(2vw, 1rem)", fontWeight: 400 }}
-//         >
-//           {prefix}
-//           {topic.name}
-//         </Typography.Text> }
-//       </TopicItemAlias>
-//     </TopicItemContainer>
-//   );
-// };
-
 const TopicItem = (props: TopicItemProps) => {
   const { topic, isSelected, onClick } = props;
-  const [image, setImage] = useState(topic.logoOutline)
-  
+  const [image, setImage] = useState(topic.logoOutline);
+
   useEffect(() => {
     if (isSelected) {
       setImage(topic.logo);
     } else {
-      setImage(topic.logoOutline)
+      setImage(topic.logoOutline);
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isSelected])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isSelected]);
 
   const prefix = "#"; // topic.type === 'blockchain' ? '$' : '#'
-
+  console.log(topic);
   return (
     <TopicItemContainer isSelected={isSelected} onClick={onClick}>
-       {/* {image && <TopicItemImage
-            src={image}
-            alt={`${topic.name} logo`}
-          />} */}
-      {isSelected ? (
-          <TopicItemImage
-            src={topic.logo}
-            alt={`${topic.name} logo`}
-          />
-        ) : (
-          <TopicItemImage src={topic.logoOutline} alt={`${topic.name} logo`} />
-        )}
+      {image && <TopicItemImage src={image} alt={`${topic.name} logo`} />}
       <TopicItemAlias>
         {isSelected && (
           <Typography.Text
-            style={{ fontSize: "min(2vw, 1rem)", fontWeight: 400 }}
+            style={{ fontSize: "min(2vw, 0.8rem)", fontWeight: 400 }}
           >
             {prefix}
             {topic.name}
@@ -167,6 +129,15 @@ export const WelcomePage: React.FC = () => {
   const [messageApi, contextHolder] = message.useMessage();
   const [selectedTopics, setSelectedTopics] = useState<string[]>([]);
   const [isTopicsUpdating, setTopicsUpdating] = useState(false);
+  const [topicList, setTopicList] = useState<UserTopic[]>();
+
+  useEffect(() => {
+    const getTopics = async () => {
+      const topics = await getTopicLits();
+      setTopicList(topics);
+    };
+    getTopics();
+  }, []);
 
   useEffect(() => {
     if (selectedTopics.length === 4 && wallet?.address) {
@@ -220,8 +191,8 @@ export const WelcomePage: React.FC = () => {
 
   const renderTopicsContainer = (group: number) => (
     <TopicsContainer>
-      {TopicsList &&
-        TopicsList
+      {topicList &&
+        topicList
           .filter((topic) => topic.group === group)
           .map((topic) => (
             <TopicItem
@@ -235,7 +206,10 @@ export const WelcomePage: React.FC = () => {
   );
 
   return (
-    <Box>
+    <Box
+    width={'700px'}
+    margin={'0 auto'}
+    >
       {contextHolder}
       <Spin spinning={isTopicsUpdating} size={"large"}>
         <WelcomeContainer>

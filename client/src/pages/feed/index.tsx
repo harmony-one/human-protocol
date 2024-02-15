@@ -3,7 +3,7 @@ import {Box} from "grommet";
 import {getUserActions, sendUserAction} from "../../api/worker";
 import {Spin, Typography, List, Input, Button, Select, SelectProps} from "antd";
 import {UserAction} from "../../types";
-import {TopicsList} from "../../constants";
+import {baseTopicList} from "../../constants";
 import {toast} from "react-toastify";
 import { useUserContext } from '../../context/UserContext';
 
@@ -35,12 +35,13 @@ export const FeedPage = () => {
 
   useEffect(() => {
     loadData()
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [wallet]);
 
   const harmonyActions = actions
     .filter(action => action.topic === 'harmony')
 
-    const options = TopicsList.map((topic) => ({
+    const options = baseTopicList.map((topic) => ({
       label: topic.name,
       value: topic.name,
     }));
