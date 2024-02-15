@@ -8,13 +8,10 @@ import { toast } from 'react-toastify';
 import { useUserContext } from '../../context/UserContext';
 import { getAccount } from '../../api/worker';
 import styled from "styled-components";
-import Auth0Login from '../../oauth/Auth0Login';
+import LinkedinAuth from '../../oauth/linkedin/LinkedinAuth';
+import SignInButton from '../../components/buttons/SignInButton';
+import OpenIdLogin from '../../oauth/auth0/OpenIdLogin';
 import { AppMenu } from '../../components/menu';
-
-const SignInButton = styled(Button)`
-    font-size: 16px;
-    width: 300px;
-`
 
 export const HomePage = () => {
   const navigate = useNavigate();
@@ -29,22 +26,22 @@ export const HomePage = () => {
   //   }
   // }, [wallet, navigate]);
 
-  const handleSignIn = async (provider: string): Promise<void> => {
+  const handleFirebaseSignIn = async (provider: string): Promise<void> => {
     let userCredential: UserCredential;
 
     try {
       // TODO: ensure the error "auth/popup-closed-by-user" is triggered immediately
       switch (provider) {
-        case 'google':
+        case 'Google':
           userCredential = await signInWithGoogle();
           break;
-        case 'twitter':
+        case 'Twitter':
           userCredential = await signInWithTwitter();
           break;
-        case 'github':
+        case 'Github':
           userCredential = await signInWithGithub();
           break;
-        case 'facebook':
+        case 'Facebook':
           userCredential = await signInWithFacebook();
           break;
         default:
@@ -91,23 +88,20 @@ export const HomePage = () => {
 
   return (
     <Box align="center" pad={{ top: '15vh' }} gap={'16px'}>
-      <Typography.Title>
-        Auth
-      </Typography.Title>
-      <SignInButton onClick={() => handleSignIn('google')}>
-        Google
-      </SignInButton>
-      <SignInButton onClick={() => handleSignIn('twitter')}>
-        Twitter
-      </SignInButton>
-      <SignInButton onClick={() => handleSignIn('github')}>
-        Github
-      </SignInButton>
-      <SignInButton onClick={() => handleSignIn('facebook')}>
-        Facebook
-      </SignInButton>
-      <Auth0Login />
-      {/* <Input placeholder="Email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
+        <Typography.Title>
+          Auth
+        </Typography.Title>
+        {/* <SignInButton onClick={handleFirebaseSignIn} providerName="Google" displayName="Google" />
+        <SignInButton onClick={handleFirebaseSignIn} providerName="Twitter" displayName="Twitter" />
+        <SignInButton onClick={handleFirebaseSignIn} providerName="Github" displayName="Github" />
+        <SignInButton onClick={handleFirebaseSignIn} providerName="Facebook" displayName="Facebook"/> */}
+        <OpenIdLogin providerName="google-oauth2" displayName="Google"/>
+        <OpenIdLogin providerName="twitter" displayName="Twitter"/>
+        <OpenIdLogin providerName="github" displayName="Github"/>
+        <OpenIdLogin providerName="linkedin" displayName="LinkedIn"/>
+        <OpenIdLogin providerName="discord" displayName="Discord"/>
+        <LinkedinAuth />
+        {/* <Input placeholder="Email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
         <Input placeholder="Password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
         <Button onClick={handleEmailSignIn}>Sign in with Email</Button> */}
     </Box>
