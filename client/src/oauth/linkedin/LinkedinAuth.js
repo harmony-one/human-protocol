@@ -12,7 +12,7 @@ const LinkedinAuth = () => {
   };
   return (
     <div>
-        <SignInButton onClick={handleLinkedInLogin} providerName="LinkedIn"/>
+        <SignInButton onClick={handleLinkedInLogin} providerName="LinkedIn" displayName="LinkedIn (without Auth0)"/>
     </div>
   )
 }

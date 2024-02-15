@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
-export const LinkedInCallback = () => {
+export const OpenIdCallback = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -10,7 +10,8 @@ export const LinkedInCallback = () => {
     const code = queryParams.get('code');
 
     if (code) {
-      fetch('/api/linkedin/exchange-code', {
+      // Update the endpoint to a more general name reflecting its purpose
+      fetch('/api/openid/exchange-code', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -23,21 +24,27 @@ export const LinkedInCallback = () => {
         }
         return response.json();
       })
-      
       .then(data => {
-        console.log(data)
-        navigate('/auth');
+        // Assuming `data` contains relevant user info or a success message
+        console.log(data);
+        // Navigate to a path indicating successful login or to the user's dashboard
+        navigate('/auth'); // Adjust according to your app's routing
       })
       .catch(error => {
         console.error('Error:', error);
+        // Handle errors, possibly navigate to an error page or login page
+        navigate('/auth', { state: { error: 'Failed to authenticate.' } });
       });
+    } else {
+      // No code in URL, navigate back to login or home
+      navigate('/auth');
     }
     
   }, [location, navigate]);
 
   return (
     <div>
-      Processing LinkedIn authentication...
+      Processing authentication...
     </div>
   );
 };

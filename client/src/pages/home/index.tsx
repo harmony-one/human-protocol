@@ -8,9 +8,9 @@ import {toast} from 'react-toastify';
 import {useUserContext} from '../../context/UserContext';
 import {getAccount} from '../../api/worker';
 import styled from "styled-components";
-import Auth0Login from '../../oauth/Auth0Login';
 import LinkedinAuth from '../../oauth/linkedin/LinkedinAuth';
 import SignInButton from '../../components/buttons/SignInButton';
+import OpenIdLogin from '../../oauth/auth0/OpenIdLogin';
 
 export const HomePage = () => {
   const navigate = useNavigate();
@@ -86,11 +86,15 @@ export const HomePage = () => {
         <Typography.Title>
           Auth
         </Typography.Title>
-        <SignInButton onClick={handleFirebaseSignIn} providerName="Google" />
-        <SignInButton onClick={handleFirebaseSignIn} providerName="Twitter" />
-        <SignInButton onClick={handleFirebaseSignIn} providerName="Github" />
-        <SignInButton onClick={handleFirebaseSignIn} providerName="Facebook" />
-        <Auth0Login />
+        {/* <SignInButton onClick={handleFirebaseSignIn} providerName="Google" displayName="Google" />
+        <SignInButton onClick={handleFirebaseSignIn} providerName="Twitter" displayName="Twitter" />
+        <SignInButton onClick={handleFirebaseSignIn} providerName="Github" displayName="Github" />
+        <SignInButton onClick={handleFirebaseSignIn} providerName="Facebook" displayName="Facebook"/> */}
+        <OpenIdLogin providerName="google-oauth2" displayName="Google"/>
+        <OpenIdLogin providerName="twitter" displayName="Twitter"/>
+        <OpenIdLogin providerName="github" displayName="Github"/>
+        <OpenIdLogin providerName="linkedin" displayName="LinkedIn"/>
+        <OpenIdLogin providerName="discord" displayName="Discord"/>
         <LinkedinAuth />
         {/* <Input placeholder="Email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
         <Input placeholder="Password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} />

@@ -7,9 +7,9 @@ const StyledSignInButton = styled(Button)`
     width: 300px;
 `;
 
-const SignInButton = ({ onClick, providerName }) => (
+const SignInButton = ({ onClick, providerName, displayName }) => (
     <StyledSignInButton onClick={() => onClick(providerName)}>
-      {providerName}
+      {displayName}
     </StyledSignInButton>
   );
   

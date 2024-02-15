@@ -9,6 +9,7 @@ import { TagPage } from "./pages/Tag";
 import { UserWorldLocationsPage, WorldLocationsPage } from "./pages/WorldLocations";
 import { FeedPage } from "./pages/feed";
 import { LinkedInCallback } from "./oauth/linkedin/LinkedinCallback";
+import { OpenIdCallback } from "./oauth/auth0/OpenIdCallback";
 
 export const AppRoutes = () => {
   return (
@@ -29,6 +30,7 @@ export const AppRoutes = () => {
           element={<UserWorldLocationsPage />}
         />
         <Route path="/auth/linkedin-callback" element={<LinkedInCallback />} />
+        <Route path="/auth/openid-callback" element={<OpenIdCallback />} />
       </Route>
     </Routes>
   );
