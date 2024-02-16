@@ -48,7 +48,7 @@ export const HomePage = () => {
       <UsernamePrompt providerName="github" displayName="Github" providerShorthand="git" authType="openid" />
       <UsernamePrompt providerName="linkedin" displayName="LinkedIn" providerShorthand="l" authType="openid" />
       <UsernamePrompt providerName="discord" displayName="Discord" providerShorthand="d" authType="openid" />
-      <UsernamePrompt providerName="linkedIn" displayName="LinkedIn (without Auth0)" providerShorthand="l" authType="linkedin" />
+      {/* <UsernamePrompt providerName="linkedIn" displayName="LinkedIn (without Auth0)" providerShorthand="l" authType="linkedin" /> */}
     </Box>
   );
 }
