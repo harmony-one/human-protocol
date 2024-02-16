@@ -5,7 +5,6 @@
   justify-content: flex-start;
   /* min-height: 100vh; */
   height: -webkit-fill-available; /* fullscreen */
-  font-family: Arial, sans-serif;
   padding: 20px;
 }
 
@@ -62,6 +61,7 @@ input,
   border-radius: 3px;
   font-weight: bold;
   color: #007bff;
+  font-size: 14px;
 }
 
 .input-with-icon {
@@ -77,7 +77,7 @@ input,
   cursor: pointer;
   position: relative;
   color: #007bff;
-  font-size: 20px;
+  font-size: 18px;
   background-color: transparent;
 }
 
@@ -85,12 +85,12 @@ input,
 .submission small {
   color: #333;
   margin: 0 0 10px 0;
-  font-size: 16px;
+  font-size: 14px;
 }
 
 .submission small {
   color: #666;
-  font-size: 12px;
+  font-size: 10px;
 }
 
 .username-link,
