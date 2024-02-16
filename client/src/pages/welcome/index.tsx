@@ -110,7 +110,7 @@ const TopicItem = (props: TopicItemProps) => {
       <TopicItemAlias>
         {isSelected && (
           <Typography.Text
-            style={{ fontSize: "min(2vw, 0.8rem)", fontWeight: 600 }}
+            style={{ fontSize: "min(2.4vw, 0.8rem)", fontWeight: 600 }}
           >
             {prefix}
             {topic.name}
